@@ -1,3 +1,15 @@
+export const title = {
+  textAlign: "center",
+  fontSize: 30,
+  fontWeight: "600",
+  color:"#fff"
+};
+export const title2 = {
+  textAlign: "center",
+  fontSize: 17,
+  fontWeight: "600",
+  color:"#b4b7bf"
+};
 export const inputContainer = {
   display: "flex",
   width: "100%",
@@ -25,3 +37,9 @@ export const error1={
   textAlign: "center",
   fontWeight: "600",
 };
+// export const bwmessage = {
+//   color: '#e84646',
+//   fontSize: 15,
+//   textAlign: "center",
+//   fontWeight: "600",
+// }

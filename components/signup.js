@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import {View,TextInput,Text,StyleSheet,Image,TouchableOpacity,} from "react-native";
-import { error1, input, inputContainer } from "../css/logincss";
+import { error1, input, inputContainer, title } from "../css/logincss";
 import { button1 } from "../css/buttoncss";
 
 function Signup({ navigation }) {
@@ -13,7 +13,7 @@ function Signup({ navigation }) {
   });
   const [errorMsg, setErrorMsg] = useState(null);
   const bg = require("../images/loginBG.png");
-  const handleSignup = () => {
+  const handleVerification = () => {
     if (userData.name == "" || userData.email == "" || userData.deviceID == "" || userData.password == "" || userData.confirmPassword == "") {
       setErrorMsg("All fields are required");
       return;
@@ -25,7 +25,7 @@ function Signup({ navigation }) {
         setErrorMsg("Passwords do not match");
         return;
       } else {
-        fetch("http://10.0.2.2.:3001/signup", {
+        fetch("http://10.0.2.2.:5000/verify", {
           method: "POST",
           headers: {"Content-Type": "application/json",
           },
@@ -34,15 +34,17 @@ function Signup({ navigation }) {
           .then(res => res.json()).then(
             data => {
             // console.log(data);
-            if (data.error) {
-              setErrorMsg(data.error);
-            } else {
-              alert(userData.name+"'s Account created successfully");
-              navigation.navigate("Login");
+            if(data.error==="Email or Device ID already used"){
+              setErrorMsg("Email or Device ID already used");
+            }
+            else if(data.message==="Verification Code sent to your email"){
+              // console.log(data.udata);
+              alert(data.message);
+              navigation.navigate("Verify",{userdata: data.udata});
             }
           }
-          );
-      }
+        );
+      } 
     }
   };
     const handleLogin = () => {
@@ -58,6 +60,7 @@ function Signup({ navigation }) {
       <View style={styles.container}>
         <Image style={styles.bg} source={bg} />
         <View style={styles.content}>
+          <Text style={title}>Sign Up</Text>
           <View style={inputContainer}>
             <TextInput
             textContentType="name"
@@ -119,7 +122,7 @@ function Signup({ navigation }) {
           </View>
           {errorMsg ? <Text style={error1}>{errorMsg}</Text> : null}
           <TouchableOpacity>
-            <Text style={button1} onPress={handleSignup}>
+            <Text style={button1} onPress={handleVerification}>
               Sign Up
             </Text>
           </TouchableOpacity>
