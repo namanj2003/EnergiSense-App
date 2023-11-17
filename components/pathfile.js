@@ -7,6 +7,7 @@ import Homepage from "../components/homepage";
 import Login from "../components/login";
 import Signup from "../components/signup";
 import { createStackNavigator } from "@react-navigation/stack";
+import Verify from "../components/verification";
 
 function Pathfile() {
   const Stack = createStackNavigator();
@@ -18,7 +19,8 @@ function Pathfile() {
         <Stack.Screen name="Onboarding3" component={Onboarding3} options={{headerShown:false}}/>
         <Stack.Screen name="Login" component={Login} options={{headerShown:false}}/>
         <Stack.Screen name="Home" component={Homepage} options={{headerShown:false}}/>
-        <Stack.Screen name="Signup" component={Signup} options={{headerShown:false}}/> 
+        <Stack.Screen name="Signup" component={Signup} options={{headerShown:false}}/>
+        <Stack.Screen name="Verify" component={Verify} options={{headerShown:false}}/> 
       </Stack.Navigator>
     </NavigationContainer>
   );
