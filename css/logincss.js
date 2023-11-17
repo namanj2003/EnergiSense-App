@@ -2,7 +2,7 @@ export const inputContainer = {
   display: "flex",
   width: "100%",
   flexDirection: "column",
-  marginVertical: 20,
+  marginVertical: 10,
 };
 export const input = {
   height: 55,
@@ -17,5 +17,11 @@ export const input = {
 export const forgotPassword = {
   color: '#b4b7bf',
   fontSize: 15,
+  fontWeight: "600",
+};
+export const error1={
+  color: '#e84646',
+  fontSize: 15,
+  textAlign: "center",
   fontWeight: "600",
 };
