@@ -26,6 +26,10 @@ const handleSignup = () => {
         setErrorMsg("Please enter a valid verification code");
         return;
     }
+    else if(userCode!=actualCode){
+        setErrorMsg("Verification Code Incorrect");
+        return;
+    }
     else if(userCode==actualCode){
         // console.log("Verification Successful");
         const uploadData = {

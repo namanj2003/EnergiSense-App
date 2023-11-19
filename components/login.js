@@ -40,7 +40,7 @@ function Login({ navigation }) {
   };
 
   const handleForgotPassword = () => {
-    // Handle forgot password logic here
+    navigation.navigate('ForgotPass1');
   };
 
   const handleSignup = () => {
@@ -80,7 +80,7 @@ function Login({ navigation }) {
           />
         </View>
         <View onPress={handleForgotPassword} style={styles.fp}>
-          <Text style={forgotPassword}>Forgot Password?</Text>
+          <Text style={forgotPassword} onPress={handleForgotPassword}>Forgot Password?</Text>
         </View>
         {errorMsg ? <Text style={error1}>{errorMsg}</Text> : null}
         <TouchableOpacity>
