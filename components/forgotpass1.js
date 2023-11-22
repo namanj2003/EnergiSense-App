@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, TextInput, Text, StyleSheet, Image, TouchableOpacity, ScrollView } from 'react-native';
 import { error1, forgotPassword, input, inputContainer, title, title2 } from '../css/logincss';
 import { button1 } from '../css/buttoncss';
+import ip from './ip';
 
 function ForgotPass1({ navigation }) {
   const [email1, setEmail1] = useState({ email: ""});
@@ -19,7 +20,7 @@ function ForgotPass1({ navigation }) {
             return;
         }
     else{
-        fetch("http://10.0.2.2.:5000/forgot-password-check",{
+        fetch(`https://${ip}/forgot-password-check`,{
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

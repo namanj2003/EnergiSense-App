@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import {View,TextInput,Text,StyleSheet,Image,TouchableOpacity,} from "react-native";
 import { error1, input, inputContainer, title } from "../css/logincss";
 import { button1 } from "../css/buttoncss";
+import ip from "./ip";
 
 function Signup({ navigation }) {
   const [userData, setUserData] = useState({
@@ -25,7 +26,7 @@ function Signup({ navigation }) {
         setErrorMsg("Passwords do not match");
         return;
       } else {
-        fetch("http://10.0.2.2.:5000/verify", {
+        fetch(`https://${ip}/verify`, {
           method: "POST",
           headers: {"Content-Type": "application/json",
           },
