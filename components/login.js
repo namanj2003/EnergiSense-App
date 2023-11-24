@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, TextInput, Text, StyleSheet, Image, TouchableOpacity, ScrollView } from 'react-native';
 import { error1, forgotPassword, input, inputContainer, title } from '../css/logincss';
 import { button1 } from '../css/buttoncss';
+import ip from './ip';
 
 function Login({ navigation }) {
   const [userData, setUserData] = useState({ email: "", password: "" });
@@ -18,7 +19,7 @@ function Login({ navigation }) {
         setErrorMsg("Invalid email address");
         return;
       } else {
-        fetch("http://10.0.2.2.:5000/login", {
+        fetch(`https://${ip}/login`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -40,7 +41,7 @@ function Login({ navigation }) {
   };
 
   const handleForgotPassword = () => {
-    // Handle forgot password logic here
+    navigation.navigate('ForgotPass1');
   };
 
   const handleSignup = () => {
@@ -80,7 +81,7 @@ function Login({ navigation }) {
           />
         </View>
         <View onPress={handleForgotPassword} style={styles.fp}>
-          <Text style={forgotPassword}>Forgot Password?</Text>
+          <Text style={forgotPassword} onPress={handleForgotPassword}>Forgot Password?</Text>
         </View>
         {errorMsg ? <Text style={error1}>{errorMsg}</Text> : null}
         <TouchableOpacity>

@@ -8,6 +8,8 @@ import Login from "../components/login";
 import Signup from "../components/signup";
 import { createStackNavigator } from "@react-navigation/stack";
 import Verify from "../components/verification";
+import ForgotPass1 from "../components/forgotpass1";
+import ForgotPass2 from "../components/forgotpass2";
 
 function Pathfile() {
   const Stack = createStackNavigator();
@@ -20,7 +22,9 @@ function Pathfile() {
         <Stack.Screen name="Login" component={Login} options={{headerShown:false}}/>
         <Stack.Screen name="Home" component={Homepage} options={{headerShown:false}}/>
         <Stack.Screen name="Signup" component={Signup} options={{headerShown:false}}/>
-        <Stack.Screen name="Verify" component={Verify} options={{headerShown:false}}/> 
+        <Stack.Screen name="Verify" component={Verify} options={{headerShown:false}}/>
+        <Stack.Screen name="ForgotPass1" component={ForgotPass1} options={{headerShown:false}}/>
+        <Stack.Screen name="ForgotPass2" component={ForgotPass2} options={{headerShown:false}}/> 
       </Stack.Navigator>
     </NavigationContainer>
   );

@@ -8,7 +8,8 @@ export const title2 = {
   textAlign: "center",
   fontSize: 17,
   fontWeight: "600",
-  color:"#b4b7bf"
+  color:"#b4b7bf",
+  marginBottom: 30,
 };
 export const inputContainer = {
   display: "flex",

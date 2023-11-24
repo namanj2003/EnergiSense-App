@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, TextInput, Text, StyleSheet, Image,TouchableOpacity, ScrollView } from 'react-native';
 import { error1, input, inputContainer, title, title2 } from '../css/logincss';
 import { button1 } from '../css/buttoncss';
+import ip from './ip';
 
 function Verify({ navigation, route}) {
 const {userdata} = route.params;
@@ -26,6 +27,10 @@ const handleSignup = () => {
         setErrorMsg("Please enter a valid verification code");
         return;
     }
+    else if(userCode!=actualCode){
+        setErrorMsg("Verification Code Incorrect");
+        return;
+    }
     else if(userCode==actualCode){
         // console.log("Verification Successful");
         const uploadData = {
@@ -34,7 +39,7 @@ const handleSignup = () => {
             deviceID: userdata?.deviceID,
             password: userdata?.password,
         };
-        fetch("http://10.0.2.2.:5000/signup", {
+        fetch(`https://${ip}/signup`, {
             method: "POST",
             headers: {"Content-Type": "application/json",
             },
