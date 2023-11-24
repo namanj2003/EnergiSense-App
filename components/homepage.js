@@ -1,7 +1,9 @@
 import React from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 import { StyleSheet,  } from "react-native";
-function Homepage({navigation}){
+function Homepage({navigation, route}){
+  const { api } = route.params;
+  console.log(api);
     return(
         <View style={styles.container}>
             <Text style={styles.content}>Homepage</Text>

@@ -33,7 +33,7 @@ function Login({ navigation }) {
               setErrorMsg(data.error);
             } else {
               alert("Login Successful");
-              navigation.navigate("Home");
+              navigation.navigate("Home", { api: data.apikey });
             }
           });
       }
