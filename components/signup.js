@@ -1,8 +1,9 @@
 import React, { useState } from "react";
-import {View,TextInput,Text,StyleSheet,Image,TouchableOpacity,} from "react-native";
+import {View,TextInput,Text,StyleSheet,Image,TouchableOpacity, ActivityIndicator,} from "react-native";
 import { error1, input, inputContainer, title } from "../css/logincss";
 import { button1 } from "../css/buttoncss";
 import ip from "./ip";
+import { loader } from "../css/loadercss";
 
 function Signup({ navigation }) {
   const [userData, setUserData] = useState({
@@ -13,6 +14,7 @@ function Signup({ navigation }) {
     confirmPassword: "",
   });
   const [errorMsg, setErrorMsg] = useState(null);
+  const [loading, setLoading] = useState(false);
   const bg = require("../images/loginBG.png");
   const handleVerification = () => {
     if (userData.name == "" || userData.email == "" || userData.deviceID == "" || userData.password == "" || userData.confirmPassword == "") {
@@ -26,6 +28,7 @@ function Signup({ navigation }) {
         setErrorMsg("Passwords do not match");
         return;
       } else {
+        setLoading(true);
         fetch(`https://${ip}/verify`, {
           method: "POST",
           headers: {"Content-Type": "application/json",
@@ -34,17 +37,21 @@ function Signup({ navigation }) {
         })
           .then(res => res.json()).then(
             data => {
-            // console.log(data);
+              setLoading(false);
             if(data.error==="Email or Device ID already used"){
               setErrorMsg("Email or Device ID already used");
             }
             else if(data.message==="Verification Code sent to your email"){
               // console.log(data.udata);
-              alert(data.message);
+              // alert(data.message);
               navigation.navigate("Verify",{userdata: data.udata});
             }
           }
-        );
+        ).catch((err) => {
+          setLoading(false);
+          setErrorMsg("Something went wrong, Please Try Again");
+          console.log(err);
+        });
       } 
     }
   };
@@ -60,6 +67,8 @@ function Signup({ navigation }) {
     return (
       <View style={styles.container}>
         <Image style={styles.bg} source={bg} />
+        {loading ? (
+        <ActivityIndicator size="large" color="#fff" style={loader}/>):(
         <View style={styles.content}>
           <Text style={title}>Sign Up</Text>
           <View style={inputContainer}>
@@ -77,7 +86,7 @@ function Signup({ navigation }) {
             <TextInput
             textContentType="emailAddress"
               style={input}
-              onChangeText={(text) => setUserData({ ...userData, email: text })}
+              onChangeText={(text) => setUserData({ ...userData, email: text.toLowerCase() })}
               onPressIn={() => setErrorMsg(null)}
               placeholder="Email"
               placeholderTextColor="#b4b7bf"
@@ -134,6 +143,7 @@ function Signup({ navigation }) {
             </Text>
           </Text>
         </View>
+        )}
       </View>
     );
   };

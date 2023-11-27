@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
-import { View, TextInput, Text, StyleSheet, Image, TouchableOpacity, ScrollView } from 'react-native';
+import { View, TextInput, Text, StyleSheet, Image, TouchableOpacity, ScrollView, ActivityIndicator } from 'react-native';
 import { error1, forgotPassword, input, inputContainer, title, title2 } from '../css/logincss';
 import { button1 } from '../css/buttoncss';
 import ip from './ip';
+import { loader } from '../css/loadercss';
 
 function ForgotPass1({ navigation }) {
   const [email1, setEmail1] = useState({ email: ""});
   const [errorMsg, setErrorMsg] = useState(null);
+  const [loading, setLoading] = useState(false);
   const bg = require("../images/loginBG.png");
 
   const handleForgotPassword = () => {
@@ -20,6 +22,7 @@ function ForgotPass1({ navigation }) {
             return;
         }
     else{
+      setLoading(true);
         fetch(`https://${ip}/forgot-password-check`,{
             method: "POST",
             headers: {
@@ -29,16 +32,21 @@ function ForgotPass1({ navigation }) {
         })
         .then(res => res.json())
         .then(data => {
+            setLoading(false);
             if(data.message==="Verification Code sent to your email to reset your password"){
-                alert(data.message);
+                // alert(data.message);
                 navigation.navigate("ForgotPass2",{changepass: data.resetData});
             }
             else{
                 alert("User does not exist");
                 navigation.navigate("Signup");
             }
+        }).catch((err) => {
+            setLoading(false);
+            setErrorMsg("Something went wrong, Please Try Again");
+            console.log(err);
         });
-        }
+    }
 
     
   };
@@ -50,6 +58,8 @@ function ForgotPass1({ navigation }) {
   return (
     <View style={styles.container}>
       <Image style={styles.bg} source={bg} />
+      {loading ? (
+      <ActivityIndicator size="large" color="#fff" style={loader}/>):(
       <View style={styles.content}>
         <Text style={title}>Forgot Password?</Text>
         <Text style={title2}>Enter the Email ID you used to create account</Text>
@@ -70,8 +80,10 @@ function ForgotPass1({ navigation }) {
           </Text>
         </TouchableOpacity>
       </View>
+      )}
     </View>
   );
+
 }
 
 const styles = StyleSheet.create({

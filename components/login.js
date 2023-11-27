@@ -1,12 +1,15 @@
 import React, { useState } from 'react';
-import { View, TextInput, Text, StyleSheet, Image, TouchableOpacity, ScrollView } from 'react-native';
+import { View, TextInput, Text, StyleSheet, Image, TouchableOpacity, ScrollView, ActivityIndicator } from 'react-native';
 import { error1, forgotPassword, input, inputContainer, title } from '../css/logincss';
 import { button1 } from '../css/buttoncss';
 import ip from './ip';
+import { loader } from '../css/loadercss';
+import * as SecureStore from 'expo-secure-store';
 
 function Login({ navigation }) {
   const [userData, setUserData] = useState({ email: "", password: "" });
   const [errorMsg, setErrorMsg] = useState(null);
+  const [loading, setLoading] = useState(false);
   const bg = require("../images/loginBG.png");
 
   const handleLogin = () => {
@@ -19,6 +22,7 @@ function Login({ navigation }) {
         setErrorMsg("Invalid email address");
         return;
       } else {
+        setLoading(true);
         fetch(`https://${ip}/login`, {
           method: "POST",
           headers: {
@@ -28,13 +32,26 @@ function Login({ navigation }) {
         })
           .then((res) => res.json())
           .then((data) => {
-            console.log(data);
+            setLoading(false);
+            // console.log(data);
             if (data.error) {
               setErrorMsg(data.error);
-            } else {
-              alert("Login Successful");
+            } else{
               navigation.navigate("Home", { api: data.apikey });
+              const storeData = async () => {
+              try {
+                await SecureStore.setItemAsync('alreadyLoggedIn', 'true');
+              }
+              catch (error) {
+                console.log('error @loggedin ', error);
+              }
             }
+            storeData();}
+          })
+          .catch((err) => {
+            setLoading(false);
+            setErrorMsg("Something went wrong, Please Try Again");
+            console.log(err);
           });
       }
     }
@@ -55,47 +72,47 @@ function Login({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <Image style={styles.bg} source={bg} />
-      <View style={styles.content}>
-        <Text style={title}>Login</Text>
-        <View style={inputContainer}>
-          <TextInput
-            style={input}
-            onChangeText={(text) => setUserData({ ...userData, email: text })}
-            onPressIn={() => setErrorMsg(null)}
-            placeholder="Email"
-            placeholderTextColor="#b4b7bf"
-            clearButtonMode='always'
-          />
-        </View>
-        <View style={inputContainer}>
-          <TextInput
-            style={input}
-            onChangeText={(text) => setUserData({ ...userData, password: text })}
-            onPressIn={() => setErrorMsg(null)}
-            placeholder="Password"
-            secureTextEntry={true}
-            placeholderTextColor="#b4b7bf"
-            clearButtonMode='always'
-
-          />
-        </View>
-        <View onPress={handleForgotPassword} style={styles.fp}>
-          <Text style={forgotPassword} onPress={handleForgotPassword}>Forgot Password?</Text>
-        </View>
-        {errorMsg ? <Text style={error1}>{errorMsg}</Text> : null}
-        <TouchableOpacity>
-          <Text style={button1} onPress={handleLogin} on>
-            Login
-          </Text>
-        </TouchableOpacity>
-        <Text style={styles.signup1}>
-          Don't have an account?&nbsp;
-          <Text style={styles.signup2} onPress={handleSignup}>
-            Sign Up
-          </Text>
-        </Text>
-      </View>
+     <Image style={styles.bg} source={bg} />
+      {loading ? (
+        <ActivityIndicator size="large" color="#fff" style={loader}/>):(
+        <View style={styles.content}>
+            <Text style={title}>Login</Text>
+            <View style={inputContainer}>
+              <TextInput
+                style={input}
+                onChangeText={(text) => setUserData({ ...userData, email: text.toLowerCase() })}
+                onPressIn={() => setErrorMsg(null)}
+                placeholder="Email"
+                placeholderTextColor="#b4b7bf"
+                clearButtonMode='always' />
+            </View>
+            <View style={inputContainer}>
+              <TextInput
+                style={input}
+                onChangeText={(text) => setUserData({ ...userData, password: text })}
+                onPressIn={() => setErrorMsg(null)}
+                placeholder="Password"
+                secureTextEntry={true}
+                placeholderTextColor="#b4b7bf"
+                clearButtonMode='always' />
+            </View>
+            <View onPress={handleForgotPassword} style={styles.fp}>
+              <Text style={forgotPassword} onPress={handleForgotPassword}>Forgot Password?</Text>
+            </View>
+            {errorMsg ? <Text style={error1}>{errorMsg}</Text> : null}
+            <TouchableOpacity>
+              <Text style={button1} onPress={handleLogin} on>
+                Login
+              </Text>
+            </TouchableOpacity>
+            <Text style={styles.signup1}>
+              Don't have an account?&nbsp;
+              <Text style={styles.signup2} onPress={handleSignup}>
+                Sign Up
+              </Text>
+            </Text>
+          </View>
+      )}
     </View>
   );
 }

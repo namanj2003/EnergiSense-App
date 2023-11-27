@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { View, TextInput, Text, StyleSheet, Image,TouchableOpacity, ScrollView } from 'react-native';
+import { View, TextInput, Text, StyleSheet, Image,TouchableOpacity, ScrollView, ActivityIndicator } from 'react-native';
 import { error1, input, inputContainer, title, title2 } from '../css/logincss';
 import { button1 } from '../css/buttoncss';
 import ip from './ip';
+import { loader } from '../css/loadercss';
 
 function Verify({ navigation, route}) {
 const {userdata} = route.params;
 const [errorMsg, setErrorMsg] = useState(null);
+const [loading, setLoading] = useState(false);
 const [userCode, setUserCode] = useState("xxxxxx");
 const [actualCode, setActualCode] = useState(null);
 const bg = require("../images/loginBG.png");
@@ -39,6 +41,7 @@ const handleSignup = () => {
             deviceID: userdata?.deviceID,
             password: userdata?.password,
         };
+        setLoading(true);
         fetch(`https://${ip}/signup`, {
             method: "POST",
             headers: {"Content-Type": "application/json",
@@ -47,14 +50,19 @@ const handleSignup = () => {
         })
         .then(res => res.json())
         .then(data => {
+          setLoading(false);
             if(data.message==="User Registered Successfully"){
-                alert(data.message);
+                // alert(data.message);
                 navigation.navigate("Login");
             }
             else{
                 alert("Something went wrong!!! Please try again");
                 navigation.navigate("Signup");
             }
+        }).catch((err) => {
+          setLoading(false);
+          setErrorMsg("Something went wrong, Please Try Again");
+          console.log(err);
         });       
     }
     
@@ -66,13 +74,15 @@ const handleSignup = () => {
   return (
     <View style={styles.container}>
       <Image style={styles.bg} source={bg} />
+      {loading ? (
+        <ActivityIndicator size="large" color="#fff" style={loader}/>):(
       <View style={styles.content}>
         <Text style={title}>Verify</Text>
         <Text style={title2}>A verification code has been sent to you at {userdata?.email}</Text>
         <View style={inputContainer}>
           <TextInput
             style={input}
-            onChangeText={(text)=>setUserCode(text)}
+            onChangeText={(text)=>setUserCode(text.toLowerCase())}
             onPressIn={() => setErrorMsg(null)}
             placeholder="Enter 6 Digit Verification Code"
             placeholderTextColor="#b4b7bf"
@@ -87,6 +97,7 @@ const handleSignup = () => {
             </Text>
           </TouchableOpacity>
       </View>
+      )}
     </View >
   );
 }
