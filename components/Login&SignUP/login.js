@@ -1,16 +1,16 @@
 import React, { useState } from 'react';
 import { View, TextInput, Text, StyleSheet, Image, TouchableOpacity, ScrollView, ActivityIndicator } from 'react-native';
-import { error1, forgotPassword, input, inputContainer, title } from '../css/logincss';
-import { button1 } from '../css/buttoncss';
-import ip from './ip';
-import { loader } from '../css/loadercss';
+import { error1, forgotPassword, input, inputContainer, title } from '../../css/logincss';
+import { button1 } from '../../css/buttoncss';
+import ip from '../ip';
+import { loader } from '../../css/loadercss';
 import * as SecureStore from 'expo-secure-store';
 
 function Login({ navigation }) {
   const [userData, setUserData] = useState({ email: "", password: "" });
   const [errorMsg, setErrorMsg] = useState(null);
   const [loading, setLoading] = useState(false);
-  const bg = require("../images/loginBG.png");
+  const bg = require("../../images/loginBG.png");
 
   const handleLogin = () => {
     // console.log(userData);
@@ -36,17 +36,16 @@ function Login({ navigation }) {
             // console.log(data);
             if (data.error) {
               setErrorMsg(data.error);
-            } else{
-              navigation.navigate("Home", { api: data.apikey });
-              const storeData = async () => {
+            } const storeData = async () => {
               try {
                 await SecureStore.setItemAsync('alreadyLoggedIn', 'true');
-              }
-              catch (error) {
+                await SecureStore.setItemAsync('api', data.apikey); // Store the api key
+              } catch (error) {
                 console.log('error @loggedin ', error);
               }
             }
-            storeData();}
+            storeData();
+            navigation.navigate("Home");
           })
           .catch((err) => {
             setLoading(false);

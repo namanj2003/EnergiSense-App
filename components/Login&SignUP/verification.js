@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { View, TextInput, Text, StyleSheet, Image,TouchableOpacity, ScrollView, ActivityIndicator } from 'react-native';
-import { error1, input, inputContainer, title, title2 } from '../css/logincss';
-import { button1 } from '../css/buttoncss';
-import ip from './ip';
-import { loader } from '../css/loadercss';
+import { error1, input, inputContainer, title, title2 } from '../../css/logincss';
+import { button1 } from '../../css/buttoncss';
+import ip from '../ip';
+import { loader } from '../../css/loadercss';
 
 function Verify({ navigation, route}) {
 const {userdata} = route.params;
@@ -11,7 +11,7 @@ const [errorMsg, setErrorMsg] = useState(null);
 const [loading, setLoading] = useState(false);
 const [userCode, setUserCode] = useState("xxxxxx");
 const [actualCode, setActualCode] = useState(null);
-const bg = require("../images/loginBG.png");
+const bg = require("../../images/Bg.png");
 
 
 useEffect(() => {

@@ -1,17 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { NavigationContainer } from "@react-navigation/native";
+import { createStackNavigator } from "@react-navigation/stack";
 // import Onboarding1 from "../Old Oboarding/onboarding1";
 // import Onboarding2 from "../Old Onboarding/onboarding2";
 // import Onboarding3 from "../Old Onboarding/onboarding3";
-import Homepage from "../components/homepage";
-import Login from "../components/login";
-import Signup from "../components/signup";
-import { createStackNavigator } from "@react-navigation/stack";
-import Verify from "../components/verification";
-import ForgotPass1 from "../components/forgotpass1";
-import ForgotPass2 from "../components/forgotpass2";
-import Onboarding from "../onboarding/onboarding";
-import HistoricalData from "./historyData";
+import Homepage from "../components/App Pages/homepage";
+import Login from "../components/Login&SignUP/login";
+import Signup from "../components/Login&SignUP/signup";
+import Verify from "../components/Login&SignUP/verification";
+import ForgotPass1 from "../components/Login&SignUP/forgotpass1";
+import ForgotPass2 from "../components/Login&SignUP/forgotpass2";
+import Onboarding from "./onboarding/onboarding";
+import HistoricalData from "./App Pages/historyData";
 import * as SecureStore from 'expo-secure-store';
 import { ActivityIndicator, View } from "react-native";
 
@@ -20,7 +20,8 @@ function Pathfile() {
   const [alreadyLaunched, setAlreadyLaunched] = useState(null);
   const [alreadyLoggedIn, setAlreadyLoggedIn] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-
+  const Stack = createStackNavigator();
+  
   const checkOnboarding = async () => {
     try {
       const value = await SecureStore.getItemAsync('alreadyLaunched');
@@ -45,9 +46,12 @@ function Pathfile() {
 
   useEffect(() => {
     Promise.all([checkOnboarding(), checkLogin()]).then(() => setIsLoading(false));
-  }, []);
+  },[]);
+  // useEffect(() => {
+  //   Promise.all(checkLogin()).then(() => setIsLoading(false));
+  // },[]);
   
-  const Stack = createStackNavigator();
+
   if (isLoading) {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>

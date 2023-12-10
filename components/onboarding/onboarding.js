@@ -34,7 +34,7 @@ function Onboarding(){
     }
   };
 
-    const bg = require("../images/Bg.png");
+    const bg = require("../../images/Bg.png");
     return(
         <View style={styles.container} >
             <ImageBackground style={styles.bgIcon} resizeMode="stretch" source={bg}>
