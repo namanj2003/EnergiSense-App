@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, Image, ImageBackground } from 'react-native';
 import { AnimatedCircularProgress } from 'react-native-circular-progress';
 
 const dotArc = require('../../images/Oval.png');
-const MyArcProgress = ({ progress, text, text2, max }) => {
+const MyArcProgress = React.memo(({ progress, text, text2, max }) => {
   return (
     <View>
       <View style={{flexDirection: 'row', alignItems:"center"}}>
@@ -35,7 +35,7 @@ const MyArcProgress = ({ progress, text, text2, max }) => {
       </View>
     </View>
   );
-};
+});
 const styles = StyleSheet.create({
   minValue: {
     position: 'absolute',
@@ -64,14 +64,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   Text1: {
-    fontFamily: "Roboto",
     fontSize: 25,
     color: "#343337",
     fontWeight: "bold",
     textAlign: "center",
   },
   Text2: {
-    fontFamily: "Roboto",
     fontSize: 23,
     color: "#343337",
     fontWeight: "bold",

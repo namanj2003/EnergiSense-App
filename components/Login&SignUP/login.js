@@ -45,7 +45,7 @@ function Login({ navigation }) {
               }
             }
             storeData();
-            navigation.navigate("Home");
+            navigation.navigate("BottomNav");
           })
           .catch((err) => {
             setLoading(false);
