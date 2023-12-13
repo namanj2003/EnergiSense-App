@@ -6,67 +6,57 @@ import Paginator from "./paginate";
 import { Dimensions } from 'react-native';
 import { loader } from "../../css/loadercss";
 
-
 const { width: screenWidth } = Dimensions.get('window');
 
 function HistoryData({ navigation }) {
   const [loading, setLoading] = useState(false);
   const [deviceData, setDeviceData] = useState([]);
-  const [api, setApi] = useState(null);
   const scrollX = useRef(new Animated.Value(0)).current;
   const slidesRef = useRef(null);
-
-  useEffect(() => {
-    let isMounted = true;
-      SecureStore.getItemAsync('api')
-      .then(storedApi => {
-        if (isMounted) {
-          setApi(storedApi);
-        }
-      })
-      .catch(error => console.error('Could not retrieve api:', error));
- 
-    return () => {
-      isMounted = false;
-    };
-  }, []);
+  const initialLoadingRef = useRef(true);
 
   const handleLogout = async () => {
     try {
+      await SecureStore.deleteItemAsync('api');
       await SecureStore.deleteItemAsync('alreadyLoggedIn');
       navigation.navigate("Login");
     }
     catch (error) {
       console.log('error @logout ', error);
-    }
-  }
+    }}
 
   useEffect(() => {
     const fetchDeviceData = async () => {
       try {
-        const response = await fetch(`https://blr1.blynk.cloud/external/api/getAll?token=${api}`);
+        if (initialLoadingRef.current) {
+          setLoading(true);
+        }
+        const storedApi = await SecureStore.getItemAsync('api');
+        const response = await fetch(`https://blr1.blynk.cloud/external/api/getAll?token=${storedApi}`);
         if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
+          throw new Error('Network response was not ok');
         }
         const data = await response.json();
-        setLoading(false);
-        setDeviceData([data]);        
+        setDeviceData([data]);
         // console.log(data);
+        if (initialLoadingRef.current) {
+          initialLoadingRef.current = false;
+          setLoading(false);
+        }
       } catch (error) {
-        setLoading(true);
         console.log("Unable to get Data From Device : ", error);
       }
     }
     fetchDeviceData();
     const intervalId = setInterval(fetchDeviceData, 5000);
     return () => clearInterval(intervalId);
-  }, [api, loading]);
+  }, []);
 
   const flattenedData = deviceData.flatMap(item => [
     { value: item.v0, max: 450, unit: "V", textName: "Voltage" },
     { value: item.v1, max: 30, unit: "A", textName: "Current" },
     { value: item.v2, max: 50, unit: "W", textName: "Power" },
-    { value: item.v3, max: 10, unit: "KWh", textName: "KWh" },
+    { value: item.v3, max: 10, unit: "kWh", textName: "kWh" },
   ]);
   const renderItem = ({ item }) => {
     const progress = (item.value / item.max) * 100;
@@ -80,13 +70,12 @@ function HistoryData({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.content}>Historic Data Graph</Text>
+      <Text style={styles.content}>Homepage</Text>
       <TouchableOpacity onPress={handleLogout}>
         <Text style={styles.button1}>Logout</Text>
       </TouchableOpacity>
       {loading ? (
         <ActivityIndicator size="large" color="#fff" style={loader}/>):(
-      
       <View style={{flex:1}}>
         <FlatList
           data={flattenedData}
@@ -104,16 +93,13 @@ function HistoryData({ navigation }) {
         <Paginator style={styles.pagination} data={flattenedData} scrollX={scrollX} />
       </View>
       )}
-
     </View>
-
   )
 }
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#17181F",
-    // backgroundColor: "#fff",
     alignItems: "center",
     justifyContent: "center",
   },

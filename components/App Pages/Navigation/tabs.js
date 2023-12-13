@@ -1,23 +1,23 @@
 import React from 'react';
-import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-
-import { MaterialIcons, Ionicons, FontAwesome5, FontAwesome, Foundation } from '@expo/vector-icons';
+import { MaterialIcons, Ionicons} from '@expo/vector-icons';
 import Home from '../homepage';
 import Cost from '../cost';
 import HistoricalData from '../historyData';
 import { StyleSheet, View } from 'react-native';
+import Profile from '../profile';
 
 const BottomTab = createBottomTabNavigator();
 
 function BottomTabs() {
-  
+
   return (
+    <>
     <View style={styles.container}>
       <BottomTab.Navigator
         initialRouteName="Home"
         screenOptions={({ route }) => ({
-          tabBarIcon: ({ focused, color, size }) => {
+          tabBarIcon: ({ focused, color}) => {
             let IconComponent = Ionicons;
             let iconName;
             if (route.name === 'Home') {
@@ -29,6 +29,10 @@ function BottomTabs() {
             else if (route.name === 'Cost') {
               IconComponent = MaterialIcons;
               iconName = focused ? 'monetization-on' : 'monetization-on';
+            }
+            else if (route.name === 'Profile') {
+              IconComponent = MaterialIcons;
+              iconName = focused ? 'person' : 'person-outline';
             }
             return <IconComponent  name={iconName} size={30} color={color} />;
           },
@@ -53,8 +57,10 @@ function BottomTabs() {
       <BottomTab.Screen name="Home" component={Home} />
       <BottomTab.Screen name="History" component={HistoricalData} />
       <BottomTab.Screen name="Cost" component={Cost} />
+      <BottomTab.Screen name="Profile" component={Profile} />
     </BottomTab.Navigator>
     </View>
+    </>
   );
 }
 const styles = StyleSheet.create({

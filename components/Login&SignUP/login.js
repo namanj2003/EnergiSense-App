@@ -30,16 +30,27 @@ function Login({ navigation }) {
           },
           body: JSON.stringify(userData),
         })
-          .then((res) => res.json())
+          .then((res) => {
+            if (!res.ok) {
+              throw new Error(`HTTP error! status: ${res.status}`);
+            }
+            return res.json();
+          })
           .then((data) => {
             setLoading(false);
             // console.log(data);
             if (data.error) {
               setErrorMsg(data.error);
-            } const storeData = async () => {
+            } 
+            const storeData = async () => {
               try {
                 await SecureStore.setItemAsync('alreadyLoggedIn', 'true');
-                await SecureStore.setItemAsync('api', data.apikey); // Store the api key
+                await SecureStore.setItemAsync('api', (data.apikey.deviceID));
+                await SecureStore.setItemAsync('email',(data.apikey.email));
+                await SecureStore.setItemAsync('name', JSON.stringify(data.apikey.name));
+                // console.log('data.apikey.id', data.apikey.deviceID);
+                // console.log('data.apikey.email', data.apikey.email);
+                // console.log('data.apikey.name', data.apikey.name);
               } catch (error) {
                 console.log('error @loggedin ', error);
               }
@@ -49,7 +60,7 @@ function Login({ navigation }) {
           })
           .catch((err) => {
             setLoading(false);
-            setErrorMsg("Something went wrong, Please Try Again");
+            setErrorMsg("Network request failed. Please check your internet connection and try again.");
             console.log(err);
           });
       }

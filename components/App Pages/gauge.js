@@ -41,7 +41,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     left: -5,
     bottom: '20%',
-    fontSize: 25,
+    fontSize: 23,
     color: "white",
     fontWeight: "bold",
     // Adjust these values as necessary...
@@ -50,7 +50,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     right: -25,
     bottom: '20%',
-    fontSize: 25,
+    fontSize: 23,
     color: "white",
     fontWeight: "bold",
     // Adjust these values as necessary...
@@ -64,13 +64,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   Text1: {
-    fontSize: 25,
+    fontSize: 23,
     color: "#343337",
     fontWeight: "bold",
     textAlign: "center",
   },
   Text2: {
-    fontSize: 23,
+    fontSize: 21,
     color: "#343337",
     fontWeight: "bold",
     textAlign: "center",
