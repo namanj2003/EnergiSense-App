@@ -34,7 +34,6 @@ function ForgotPass1({ navigation }) {
         .then(data => {
             setLoading(false);
             if(data.message==="Verification Code sent to your email to reset your password"){
-                // alert(data.message);
                 navigation.navigate("ForgotPass2",{changepass: data.resetData});
             }
             else{

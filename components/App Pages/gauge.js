@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, Image, ImageBackground } from 'react-native';
 import { AnimatedCircularProgress } from 'react-native-circular-progress';
 
 const dotArc = require('../../images/Oval.png');
+
 const MyArcProgress = React.memo(({ progress, text, text2, max }) => {
   return (
     <View>

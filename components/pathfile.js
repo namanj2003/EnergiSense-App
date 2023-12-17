@@ -9,6 +9,7 @@ import ForgotPass1 from "../components/Login&SignUP/forgotpass1";
 import ForgotPass2 from "../components/Login&SignUP/forgotpass2";
 import Onboarding from "./onboarding/onboarding";
 import BottomTabs from "./App Pages/Navigation/tabs";
+import Help from "./App Pages/help&support";
 
 import * as SecureStore from 'expo-secure-store';
 import { ActivityIndicator, View } from "react-native";
@@ -69,6 +70,8 @@ function Pathfile() {
         <Stack.Screen name="Verify" component={Verify} options={{ headerShown: false }} />
         <Stack.Screen name="ForgotPass1" component={ForgotPass1} options={{ headerShown: false }} />
         <Stack.Screen name="ForgotPass2" component={ForgotPass2} options={{ headerShown: false }} />
+        <Stack.Screen name="Help" component={Help} options={{ headerShown: false }} />
+
       </Stack.Navigator>
     ) : (
       <Stack.Navigator initialRouteName="Login">
@@ -78,6 +81,7 @@ function Pathfile() {
         <Stack.Screen name="ForgotPass1" component={ForgotPass1} options={{ headerShown: false }} />
         <Stack.Screen name="ForgotPass2" component={ForgotPass2} options={{ headerShown: false }} />
         <Stack.Screen name="BottomNav" component={BottomTabs} options={{ headerShown: false }} />
+        <Stack.Screen name="Help" component={Help} options={{ headerShown: false }} />
       </Stack.Navigator>
     )
   ) : (
@@ -89,6 +93,7 @@ function Pathfile() {
       <Stack.Screen name="ForgotPass1" component={ForgotPass1} options={{ headerShown: false }} />
       <Stack.Screen name="ForgotPass2" component={ForgotPass2} options={{ headerShown: false }} />
       <Stack.Screen name="BottomNav" component={BottomTabs} options={{ headerShown: false }} />
+      <Stack.Screen name="Help" component={Help} options={{ headerShown: false }} />
     </Stack.Navigator>
   )
 }

@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, TextInput, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity, TextInput, ActivityIndicator, Alert } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import * as SecureStore from 'expo-secure-store';
+import * as ImagePicker from 'expo-image-picker';
 import ip from '../ip';
 import { error1 } from '../../css/logincss';
 import { loader } from '../../css/loadercss';
@@ -16,7 +17,8 @@ const Profile = ({ navigation }) => {
   const [isEditingProfile, setIsEditingProfile] = useState(false);
   const [loading, setLoading] = useState(false);
   const [avatar, setAvatar] = useState('https://www.bootdey.com/img/Content/avatar/avatar1.png');
-  
+  const [previousAvatar, setPreviousAvatar] = useState(null);
+
 
   useEffect(() => {
     const getData = async () => {
@@ -36,15 +38,81 @@ const Profile = ({ navigation }) => {
     }
     getData();
   }, []);
-//
-const handleAvatarChange = () => {
-  if (avatar === 'https://www.bootdey.com/img/Content/avatar/avatar1.png') {
-    setAvatar('https://bootdey.com/img/Content/avatar/avatar3.png');
-  } else {
-    setAvatar('https://www.bootdey.com/img/Content/avatar/avatar1.png');
-  }
-};
-//
+  //
+  const handleAvatarChange = () => {
+    setPreviousAvatar(avatar);
+    if (avatar === 'https://www.bootdey.com/img/Content/avatar/avatar1.png') {
+      setAvatar('https://bootdey.com/img/Content/avatar/avatar3.png');
+    } else {
+      setAvatar('https://www.bootdey.com/img/Content/avatar/avatar1.png');
+    }
+  };
+  const handleProfileChange = async () => {
+    Alert.alert(
+      'Select Profile Picture',
+      'Choose the source',
+      [
+        {
+          text: 'Camera',
+          onPress: async () => {
+            const { status } = await ImagePicker.requestCameraPermissionsAsync();
+            if (status !== 'granted') {
+              alert('Sorry, we need camera permissions to make this work!');
+              return;
+            }
+
+            let result = await ImagePicker.launchCameraAsync({
+              mediaTypes: ImagePicker.MediaTypeOptions.Images,
+              cameraType: ImagePicker.CameraType.front,
+              allowsEditing: true,
+              aspect: [1, 1],
+              quality: 1,
+            });
+
+            if (!result.canceled) {
+              setPreviousAvatar(avatar);
+              const uri = result.assets[0].uri;
+              setAvatar(uri);
+              await SecureStore.setItemAsync('avatarTemp', uri);
+            } 
+            else if (result.canceled) {
+              setAvatar(previousAvatar);
+            }
+          },
+        },
+        {
+          text: 'Gallery',
+          onPress: async () => {
+            const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+            if (status !== 'granted') {
+              alert('Sorry, we need gallery permissions to make this work!');
+              return;
+            }
+        
+            let result = await ImagePicker.launchImageLibraryAsync({
+              mediaTypes: ImagePicker.MediaTypeOptions.Images,
+              cameraType: ImagePicker.CameraType.front,
+              allowsEditing: true,
+              aspect: [1, 1],
+              quality: 1,
+            });
+            
+            if (!result.canceled) {
+              setPreviousAvatar(avatar);
+              const uri = result.assets[0].uri;
+              setAvatar(uri);
+              await SecureStore.setItemAsync('avatarTemp', uri);
+            } 
+            else if (result.canceled) {
+              setAvatar(previousAvatar);
+            }
+          },
+        }
+      ],
+      { cancelable: true },
+    );
+  };
+  //
   const handleEditProfile = () => {
     setLoading(true);
     setTimeout(() => {
@@ -56,6 +124,10 @@ const handleAvatarChange = () => {
   const handleCancelEditProfile = () => {
     setLoading(true);
     setTimeout(() => {
+      if(previousAvatar){
+        setAvatar(previousAvatar);
+        SecureStore.setItemAsync('avatar', previousAvatar);
+      } 
       setIsEditingProfile(false);
       setLoading(false);
       setError(null);
@@ -63,7 +135,7 @@ const handleAvatarChange = () => {
   }
 
   const saveProfile = () => {
-    if (newData.name === "" || newData.email === "") {
+    if (newData.name === null || newData.email === null) {
       setError("All fields are required");
       return;
     } else {
@@ -90,15 +162,15 @@ const handleAvatarChange = () => {
             } else {
               setLoading(true);
               setTimeout(() => {
-              setError(null);
-              setIsEditingProfile(false);
-              setName(JSON.stringify(newData.name));
-              SecureStore.setItemAsync('name', JSON.stringify(newData.name));
-              setEmail(newData.email);
-              SecureStore.setItemAsync('email', newData.email);
-              SecureStore.setItemAsync('avatar', avatar); // Save avatar URL in SecureStore
-              setLoading(false);
-              console.log(data);
+                setError(null);
+                setIsEditingProfile(false);
+                setName(JSON.stringify(newData.name));
+                SecureStore.setItemAsync('name', JSON.stringify(newData.name));
+                setEmail(newData.email);
+                SecureStore.setItemAsync('email', newData.email);
+                SecureStore.setItemAsync('avatarTemp', avatar);
+                setLoading(false);
+                console.log(data);
               }, 500);
             }
           })
@@ -135,13 +207,19 @@ const handleAvatarChange = () => {
           (<>
             <View style={styles.coverImage}>
               <View style={styles.avatarContainer}>
-              <Image
+                <Image
                   source={{ uri: avatar }}
                   style={styles.avatar}
+                  resizeMode="contain"
                 />
-                <TouchableOpacity onPress={handleAvatarChange}>
-                  <Text style={[styles.name, styles.textWithShadow]}>Change</Text>
-                </TouchableOpacity>
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                  <TouchableOpacity onPress={handleAvatarChange}>
+                    <Text style={[styles.name, styles.textWithShadow]}>Change Avatar</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity onPress={handleProfileChange}>
+                    <Text style={[styles.name, styles.textWithShadow]}>Upload Image</Text>
+                  </TouchableOpacity>
+                </View>
               </View>
             </View>
             {loading ? (
@@ -233,23 +311,31 @@ const styles = StyleSheet.create({
     backgroundColor: "#1295b8",
     // backgroundColor:"#ff6346",
     // backgroundColor:"#094151",
-
   },
   avatarContainer: {
     alignItems: 'center',
-    marginTop: 50,
+    marginTop: 40,
+    padding: 10,
   },
   avatar: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
+    width: 130,
+    height: 130,
+    borderRadius: 65,
+    borderWidth: 4,
   },
   name: {
+    paddingLeft: 10,
+    paddingRight: 10,
     fontSize: 20,
     fontWeight: 'bold',
     marginTop: 10,
     paddingBottom: 20,
     color: '#252732'
+  },
+  textWithShadow: {
+    textShadowColor: 'rgba(0, 0, 0, 0.50)',
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 5,
   },
   content: {
     marginTop: 30,
@@ -314,7 +400,6 @@ const styles = StyleSheet.create({
     color: '#c0c5cb',
     fontSize: 17,
     fontWeight: 'bold',
-
   },
   button1: {
     color: "#c0c5cb",
