@@ -40,7 +40,7 @@ function Login({ navigation }) {
             setLoading(false);
             // console.log(data);
             if (data.error) {
-              setErrorMsg(data.error);
+              setErrorMsg(data.error);  
             } 
             const storeData = async () => {
               try {
@@ -57,6 +57,10 @@ function Login({ navigation }) {
             }
             storeData();
             navigation.navigate("BottomNav");
+            SecureStore.setItemAsync('alreadyLoggedIn', 'true')
+            .catch(error => {
+              console.error("Error saving data to SecureStore", error);
+            });
           })
           .catch((err) => {
             setLoading(false);

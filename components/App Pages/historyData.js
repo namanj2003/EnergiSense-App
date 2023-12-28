@@ -5,6 +5,7 @@ import MyArcProgress from "./gauge";
 import Paginator from "./paginate";
 import { Dimensions } from 'react-native';
 import { loader } from "../../css/loadercss";
+import ip from "../ip";
 
 const { width: screenWidth } = Dimensions.get('window');
 
@@ -15,42 +16,51 @@ function HistoryData({ navigation }) {
   const slidesRef = useRef(null);
   const initialLoadingRef = useRef(true);
 
-  const handleLogout = async () => {
-    try {
-      await SecureStore.deleteItemAsync('api');
-      await SecureStore.deleteItemAsync('alreadyLoggedIn');
-      navigation.navigate("Login");
-    }
-    catch (error) {
-      console.log('error @logout ', error);
-    }}
 
   useEffect(() => {
-    const fetchDeviceData = async () => {
-      try {
-        if (initialLoadingRef.current) {
-          setLoading(true);
-        }
+    const sendDeviceHistory = async () => {
         const storedApi = await SecureStore.getItemAsync('api');
         const response = await fetch(`https://blr1.blynk.cloud/external/api/getAll?token=${storedApi}`);
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
-        const data = await response.json();
-        setDeviceData([data]);
-        // console.log(data);
-        if (initialLoadingRef.current) {
-          initialLoadingRef.current = false;
-          setLoading(false);
+        const text = await response.text();
+        if (!text) {
+          console.log('Empty response body');
+          return;
         }
-      } catch (error) {
-        console.log("Unable to get Data From Device : ", error);
-      }
+        const data = JSON.parse(text);
+        setDeviceData([data]);
+        const uploadData = {
+          v0: parseFloat(data.v0).toFixed(3),
+          v1: parseFloat(data.v1).toFixed(3),
+          v2: parseFloat(data.v2).toFixed(3),
+          v3: parseFloat(data.v3).toFixed(3),
+          v4: parseFloat(data.v4).toFixed(3),
+          timeStamp: new Date().toLocaleString('en-US', { timeZone: 'Asia/Kolkata' }),
+          deviceID: storedApi
+          
+        };
+        // console.log(uploadData);
+        fetch(`https://${ip}/historydata-send`, {
+            method: "POST",
+            headers: {"Content-Type": "application/json",
+            },
+            body: JSON.stringify(uploadData),
+        })
+        .then(res => res.json())
+        .then(data => {
+          if(data.message==="Data saved successfully"){
+            console.log(data.message);
+          }
+          else{
+            console.log("Something went wrong!!! Please try again");
+          }})
     }
-    fetchDeviceData();
-    const intervalId = setInterval(fetchDeviceData, 5000);
+    sendDeviceHistory();
+    const intervalId = setInterval(sendDeviceHistory, 60000);
     return () => clearInterval(intervalId);
-  }, []);
+  }, []); 
 
   const flattenedData = deviceData.flatMap(item => [
     { value: item.v0, max: 450, unit: "V", textName: "Voltage" },
@@ -71,9 +81,6 @@ function HistoryData({ navigation }) {
   return (
     <View style={styles.container}>
       <Text style={styles.content}>Homepage</Text>
-      <TouchableOpacity onPress={handleLogout}>
-        <Text style={styles.button1}>Logout</Text>
-      </TouchableOpacity>
       {loading ? (
         <ActivityIndicator size="large" color="#fff" style={loader}/>):(
       <View style={{flex:1}}>

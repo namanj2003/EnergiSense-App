@@ -17,6 +17,7 @@ function Homepage({ navigation }) {
   const slidesRef = useRef(null);
   const initialLoadingRef = useRef(true);
 
+  SecureStore.setItemAsync()
   const helpPage = () => {
     navigation.navigate('Help');
   }
@@ -44,6 +45,8 @@ function Homepage({ navigation }) {
       }
     }
     fetchDeviceData();
+    kwh = parseFloat(deviceData.v3).toFixed(3);
+    SecureStore.setItemAsync('kwh', kwh);
     const intervalId = setInterval(fetchDeviceData, 5000);
     return () => clearInterval(intervalId);
   }, []);
