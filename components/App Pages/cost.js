@@ -28,7 +28,10 @@ const Cost = () => {
   let fixedCharge;
   let energyCharge;
 
-  if (kwh <= 100) {
+  if (kwh == 0) {
+    fixedCharge = 0;
+    energyCharge = 0;
+  } else if (kwh <= 100) {
     fixedCharge = 85;
     energyCharge = 1.95 * kwh;
   } else if (kwh <= 300) {
@@ -41,12 +44,12 @@ const Cost = () => {
     fixedCharge = 125;
     energyCharge = 10.86 * kwh;
   }
-
+  console.log(kwh)
   let wheelingCharge = 1.74 * kwh;
   let electricityDuty = 0.16 * (fixedCharge + energyCharge + wheelingCharge);
   let mTax = (26.04 / 100) * kwh;
   let cost = (fixedCharge + energyCharge + wheelingCharge + electricityDuty + mTax);
-
+  console.log(cost)
   return (
     <View style={styles.container}>
       <Text style={styles.content}>Cost</Text>
