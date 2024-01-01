@@ -4,7 +4,7 @@ import { error1, forgotPassword, input, inputContainer, title } from '../../css/
 import { button1 } from '../../css/buttoncss';
 import ip from '../ip';
 import { loader } from '../../css/loadercss';
-import * as SecureStore from 'expo-secure-store';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 function Login({ navigation }) {
   const [userData, setUserData] = useState({ email: "", password: "" });
@@ -40,14 +40,14 @@ function Login({ navigation }) {
             setLoading(false);
             // console.log(data);
             if (data.error) {
-              setErrorMsg(data.error);  
+              setErrorMsg(data.error);
             } 
             const storeData = async () => {
               try {
-                await SecureStore.setItemAsync('alreadyLoggedIn', 'true');
-                await SecureStore.setItemAsync('api', (data.apikey.deviceID));
-                await SecureStore.setItemAsync('email',(data.apikey.email));
-                await SecureStore.setItemAsync('name', JSON.stringify(data.apikey.name));
+                await AsyncStorage.setItem('alreadyLoggedIn', 'true');
+                await AsyncStorage.setItem('api', data.apikey.deviceID);
+                await AsyncStorage.setItem('email', data.apikey.email);
+                await AsyncStorage.setItem('name', JSON.stringify(data.apikey.name));
                 // console.log('data.apikey.id', data.apikey.deviceID);
                 // console.log('data.apikey.email', data.apikey.email);
                 // console.log('data.apikey.name', data.apikey.name);
@@ -57,10 +57,6 @@ function Login({ navigation }) {
             }
             storeData();
             navigation.navigate("BottomNav");
-            SecureStore.setItemAsync('alreadyLoggedIn', 'true')
-            .catch(error => {
-              console.error("Error saving data to SecureStore", error);
-            });
           })
           .catch((err) => {
             setLoading(false);

@@ -11,44 +11,51 @@ import Onboarding from "./onboarding/onboarding";
 import BottomTabs from "./App Pages/Navigation/tabs";
 import Help from "./App Pages/help&support";
 
-import * as SecureStore from 'expo-secure-store';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ActivityIndicator, View } from "react-native";
 
 
 function Pathfile() {
-  const [alreadyLaunched, setAlreadyLaunched] = useState(null);
-  const [alreadyLoggedIn, setAlreadyLoggedIn] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isOnboarded, setIsOnboarded] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const Stack = createStackNavigator();
 
-  const checkOnboarding = async () => {
-    try {
-      const value = await SecureStore.getItemAsync('alreadyLaunched');
-      if (value !== null) {
-        setAlreadyLaunched(true);
-      }
-    } catch (error) {
-      console.log('error @checkOnboarding: ', error);
-    }
-  };
+  // const checkOnboarding = async () => {
+  //   try {
+  //     const value = await AsyncStorage.getItem('alreadyLaunched');
+  //     if (value !== null) {
+  //       setAlreadyLaunched(true);
+  //     }
+  //   } catch (error) {
+  //     console.log('error @checkOnboarding: ', error);
+  //   }
+  // };
 
-  const checkLogin = async () => {
-    try {
-      const value = await SecureStore.getItemAsync('alreadyLoggedIn');
-      if (value !== null) {
-        setAlreadyLoggedIn(true);
-      }
-    } catch (error) {
-      console.log('error @checkLogin: ', error);
-    }
-  };
+  // const checkLogin = async () => {
+  //   try {
+  //     const value = await AsyncStorage.getItem('alreadyLoggedIn');
+  //     if (value !== null) {
+  //       setAlreadyLoggedIn(true);
+  //     }
+  //   } catch (error) {
+  //     console.log('error @checkLogin: ', error);
+  //   }
+  // };
 
   useEffect(() => {
-    Promise.all([checkOnboarding(), checkLogin()]).then(() => setIsLoading(false));
+    const checkOnboarding = async () => {
+      const alreadyOnboarded = await AsyncStorage.getItem('alreadyOnboarded');
+      const alreadyLoggedIn = await AsyncStorage.getItem('alreadyLoggedIn');
+      console.log('alreadyOnboarded:', alreadyOnboarded); // Add this line
+      console.log('alreadyLoggedIn:', alreadyLoggedIn); // Add this line
+      setIsOnboarded(alreadyOnboarded === 'true');
+      setIsLoggedIn(alreadyLoggedIn === 'true');
+      setIsLoading(false);
+    };
+  
+    checkOnboarding();
   }, []);
-  // useEffect(() => {
-  //   Promise.all(checkLogin()).then(() => setIsLoading(false));
-  // },[]);
 
 
   if (isLoading) {
@@ -58,41 +65,49 @@ function Pathfile() {
       </View>
     )
   }
+  if (!isOnboarded) {
+    return (
+      <NavigationContainer>
+        <Stack.Navigator initialRouteName="Onboarding">
+          <Stack.Screen name="Onboarding" component={Onboarding} options={{ headerShown: false }} />
+          <Stack.Screen name="Login" component={Login} options={{ headerShown: false }} />
+          <Stack.Screen name="Signup" component={Signup} options={{ headerShown: false }} />
+          <Stack.Screen name="Verify" component={Verify} options={{ headerShown: false }} />
+          <Stack.Screen name="ForgotPass1" component={ForgotPass1} options={{ headerShown: false }} />
+          <Stack.Screen name="ForgotPass2" component={ForgotPass2} options={{ headerShown: false }} />
+          <Stack.Screen name="BottomNav" component={BottomTabs} options={{ headerShown: false }} />
+          <Stack.Screen name="Help" component={Help} options={{ headerShown: false }} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    )
+  }
+  if (!isLoggedIn) {
+    return (
+      <NavigationContainer>
+        <Stack.Navigator initialRouteName="Login">
+          <Stack.Screen name="Login" component={Login} options={{ headerShown: false }} />
+          <Stack.Screen name="Signup" component={Signup} options={{ headerShown: false }} />
+          <Stack.Screen name="Verify" component={Verify} options={{ headerShown: false }} />
+          <Stack.Screen name="ForgotPass1" component={ForgotPass1} options={{ headerShown: false }} />
+          <Stack.Screen name="ForgotPass2" component={ForgotPass2} options={{ headerShown: false }} />
+          <Stack.Screen name="BottomNav" component={BottomTabs} options={{ headerShown: false }} />
+          <Stack.Screen name="Help" component={Help} options={{ headerShown: false }} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    )
+  }
   return (
     <NavigationContainer>
-      {
-        alreadyLaunched ? (
-          alreadyLoggedIn ? (
-            <Stack.Navigator initialRouteName="BottomNav">
-              <Stack.Screen name="BottomNav" component={BottomTabs} options={{ headerShown: false }} />
-              <Stack.Screen name="Help" component={Help} options={{ headerShown: false }} />
-            </Stack.Navigator>
-          ) : (
-            <Stack.Navigator initialRouteName="Login">
-              <Stack.Screen name="Login" component={Login} options={{ headerShown: false }} />
-              <Stack.Screen name="Signup" component={Signup} options={{ headerShown: false }} />
-              <Stack.Screen name="Verify" component={Verify} options={{ headerShown: false }} />
-              <Stack.Screen name="ForgotPass1" component={ForgotPass1} options={{ headerShown: false }} />
-              <Stack.Screen name="ForgotPass2" component={ForgotPass2} options={{ headerShown: false }} />
-              <Stack.Screen name="BottomNav" component={BottomTabs} options={{ headerShown: false }} />
-              <Stack.Screen name="Help" component={Help} options={{ headerShown: false }} />
-            </Stack.Navigator>
-          )
-        ) : (
-          <Stack.Navigator initialRouteName="Onboarding">
-            <Stack.Screen name="Onboarding" component={Onboarding} options={{ headerShown: false }} />
-            <Stack.Screen name="Login" component={Login} options={{ headerShown: false }} />
-            <Stack.Screen name="Signup" component={Signup} options={{ headerShown: false }} />
-            <Stack.Screen name="Verify" component={Verify} options={{ headerShown: false }} />
-            <Stack.Screen name="ForgotPass1" component={ForgotPass1} options={{ headerShown: false }} />
-            <Stack.Screen name="ForgotPass2" component={ForgotPass2} options={{ headerShown: false }} />
-            <Stack.Screen name="BottomNav" component={BottomTabs} options={{ headerShown: false }} />
-            <Stack.Screen name="Help" component={Help} options={{ headerShown: false }} />
-          </Stack.Navigator>
-        )
-      }
+      <Stack.Navigator initialRouteName="BottomNav">
+        <Stack.Screen name="BottomNav" component={BottomTabs} options={{ headerShown: false }} />
+        <Stack.Screen name="Login" component={Login} options={{ headerShown: false }} />
+        <Stack.Screen name="Signup" component={Signup} options={{ headerShown: false }} />
+        <Stack.Screen name="Verify" component={Verify} options={{ headerShown: false }} />
+        <Stack.Screen name="ForgotPass1" component={ForgotPass1} options={{ headerShown: false }} />
+        <Stack.Screen name="ForgotPass2" component={ForgotPass2} options={{ headerShown: false }} />
+        <Stack.Screen name="Help" component={Help} options={{ headerShown: false }} />
+      </Stack.Navigator>
     </NavigationContainer>
   );
 }
-
 export default Pathfile;

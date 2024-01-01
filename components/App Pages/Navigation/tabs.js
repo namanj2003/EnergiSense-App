@@ -1,6 +1,6 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { MaterialIcons, Ionicons} from '@expo/vector-icons';
+import { MaterialIcons, Ionicons} from 'react-native-vector-icons';
 import Home from '../homepage';
 import Cost from '../cost';
 import HistoricalData from '../historyData';

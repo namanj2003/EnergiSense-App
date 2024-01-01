@@ -1,7 +1,6 @@
-//import libraries
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import * as SecureStore from 'expo-secure-store';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Cost = () => {
   const [kwh, setkWh] = useState(0);
@@ -9,7 +8,7 @@ const Cost = () => {
   useEffect(() => {
     const fetchDeviceData = async () => {
       try {
-        const storedApi = await SecureStore.getItemAsync('api');
+        const storedApi = await AsyncStorage.getItem('api');
         const response = await fetch(`https://blr1.blynk.cloud/external/api/getAll?token=${storedApi}`);
         if (!response.ok) {
           throw new Error('Network response was not ok');
@@ -28,9 +27,6 @@ const Cost = () => {
 
   let fixedCharge;
   let energyCharge;
-  let wheelingCharge = 1.74 * kwh;
-  let electricityDuty = 0.16 * (fixedCharge + energyCharge + wheelingCharge);
-  let mTax = (26.04 / 100) * kwh;
 
   if (kwh <= 100) {
     fixedCharge = 85;
@@ -46,12 +42,15 @@ const Cost = () => {
     energyCharge = 10.86 * kwh;
   }
 
+  let wheelingCharge = 1.74 * kwh;
+  let electricityDuty = 0.16 * (fixedCharge + energyCharge + wheelingCharge);
+  let mTax = (26.04 / 100) * kwh;
   let cost = (fixedCharge + energyCharge + wheelingCharge + electricityDuty + mTax);
 
   return (
     <View style={styles.container}>
       <Text style={styles.content}>Cost</Text>
-      <Text style={styles.content}>{cost}</Text>
+      <Text style={styles.content}>{cost.toFixed(2)}</Text>
     </View>
   );
 };
@@ -71,5 +70,4 @@ const styles = StyleSheet.create({
   },
 });
 
-//make this component available to the app
 export default Cost;

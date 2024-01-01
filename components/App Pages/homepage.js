@@ -1,12 +1,12 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Animated, FlatList, Text, TouchableOpacity, View, StyleSheet, ActivityIndicator } from "react-native";
-import * as SecureStore from 'expo-secure-store';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import MyArcProgress from "./gauge";
 import Paginator from "./paginate";
-import { MaterialIcons, FontAwesome5  } from '@expo/vector-icons';
+import { MaterialIcons, FontAwesome5  } from 'react-native-vector-icons';
 import { Dimensions } from 'react-native';
 import { loader } from "../../css/loadercss";
-import { topNav } from "../../css/pagecss";
+import { navIcon, navIconContainer, navText, topNav } from "../../css/pagecss";
 
 const { width: screenWidth } = Dimensions.get('window');
 
@@ -17,7 +17,6 @@ function Homepage({ navigation }) {
   const slidesRef = useRef(null);
   const initialLoadingRef = useRef(true);
 
-  SecureStore.setItemAsync()
   const helpPage = () => {
     navigation.navigate('Help');
   }
@@ -28,14 +27,13 @@ function Homepage({ navigation }) {
         if (initialLoadingRef.current) {
           setLoading(true);
         }
-        const storedApi = await SecureStore.getItemAsync('api');
+        const storedApi = await AsyncStorage.getItem('api');
         const response = await fetch(`https://blr1.blynk.cloud/external/api/getAll?token=${storedApi}`);
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
         const data = await response.json();
         setDeviceData([data]);
-        // console.log(data);
         if (initialLoadingRef.current) {
           initialLoadingRef.current = false;
           setLoading(false);
@@ -45,8 +43,6 @@ function Homepage({ navigation }) {
       }
     }
     fetchDeviceData();
-    kwh = parseFloat(deviceData.v3).toFixed(3);
-    SecureStore.setItemAsync('kwh', kwh);
     const intervalId = setInterval(fetchDeviceData, 5000);
     return () => clearInterval(intervalId);
   }, []);
@@ -70,15 +66,15 @@ function Homepage({ navigation }) {
   return (
     <View style={styles.container}>
       <View style={topNav}>
-        <Text style={styles.content}>EnergiSense</Text>
-        <TouchableOpacity onPress={helpPage} style={styles.helpContainer}>
+        <Text style={navText}>EnergiSense</Text>
+        <TouchableOpacity onPress={helpPage} style={[navIconContainer,{alignSelf: "flex-end"}]}>
           {/* <MaterialIcons name="support-agent" size={35} color="#c0c5cb" style={styles.help}/> */}
-          <FontAwesome5 name="headset" size={24} color="#c0c5cb" style={styles.help}/>
+          <FontAwesome5 name="headset" size={24} color="#c0c5cb" style={[navIcon,{right: 25}]}/>
         </TouchableOpacity>
       </View>
       {loading ? (
         <ActivityIndicator size="large" color="#fff" style={loader} />) : (
-        <View style={{ flex: 1 }}>
+        <View style={{ flex: 1}}>
           <FlatList
             data={flattenedData}
             renderItem={renderItem}
@@ -103,27 +99,11 @@ function Homepage({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    width: "100%",
+    height: "100%",
     backgroundColor: "#17181F",
     alignItems: "center",
     justifyContent: "center",
-  },
-  helpContainer: {
-    flexDirection: "row",
-    alignSelf: "flex-end",
-    zIndex: 1,
-    elevation: 1,
-    position: "absolute",
-  },
-  help: {
-    position: "absolute",
-    right: 25,
-  },
-  content: {
-    marginTop: 39,
-    fontSize: 30,
-    color: "#ffa840",
-    fontWeight: "bold",
-    textAlign: "center",
   },
   button1: {
     color: "white",

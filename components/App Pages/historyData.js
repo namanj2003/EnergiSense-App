@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Animated, FlatList, Text, TouchableOpacity, View, StyleSheet, ActivityIndicator } from "react-native";
-import * as SecureStore from 'expo-secure-store';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import MyArcProgress from "./gauge";
 import Paginator from "./paginate";
 import { Dimensions } from 'react-native';
@@ -19,7 +19,7 @@ function HistoryData({ navigation }) {
 
   useEffect(() => {
     const sendDeviceHistory = async () => {
-        const storedApi = await SecureStore.getItemAsync('api');
+      const storedApi = await AsyncStorage.getItem('api');
         const response = await fetch(`https://blr1.blynk.cloud/external/api/getAll?token=${storedApi}`);
         if (!response.ok) {
           throw new Error('Network response was not ok');
