@@ -18,7 +18,7 @@
     "expo": "^49.0.21",
     "expo-cli": "^4.0.17",
     "expo-image-picker": "~14.3.2",
-    "expo-permissions": "~14.2.1",
+    "expo-permissions": "~14.4.0",
     "expo-splash-screen": "^0.22.0",
     "expo-status-bar": "~1.6.0",
     "expo-updates": "~0.18.18",
