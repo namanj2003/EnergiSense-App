@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Animated, FlatList, Text, TouchableOpacity, View, StyleSheet, ActivityIndicator } from "react-native";
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import ReactApexChart from 'react-apexcharts';
 import MyArcProgress from "./gauge";
 import Paginator from "./paginate";
 import { Dimensions } from 'react-native';
