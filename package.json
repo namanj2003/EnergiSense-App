@@ -20,7 +20,7 @@
     "expo-image-picker": "~14.3.2",
     "expo-permissions": "~14.2.1",
     "expo-splash-screen": "~0.20.5",
-    "expo-status-bar": "~1.6.0",
+    "expo-status-bar": "~1.7.1",
     "expo-updates": "~0.18.18",
     "metro-core": "^0.80.2",
     "punycode": "^2.3.1",
