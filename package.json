@@ -17,7 +17,7 @@
     "chokidar": "^3.5.3",
     "expo": "^49.0.21",
     "expo-cli": "^4.0.17",
-    "expo-image-picker": "~14.3.2",
+    "expo-image-picker": "~14.5.0",
     "expo-permissions": "~14.2.1",
     "expo-splash-screen": "~0.20.5",
     "expo-status-bar": "~1.6.0",
