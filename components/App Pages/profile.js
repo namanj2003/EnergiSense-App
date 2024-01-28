@@ -7,19 +7,19 @@ import { error1 } from '../../css/logincss';
 import { loader } from '../../css/loadercss';
 import { MaterialIcons } from 'react-native-vector-icons';
 
-const avatar1 = require('../../Avatars/avatar1.png');
-const avatar3 = require('../../Avatars/avatar3.png');
-
 const Profile = ({ navigation }) => {
+
   const [name, setName] = useState(null);
   const [email, setEmail] = useState(null);
   const [deviceID, setDeviceID] = useState(null);
   const [error, setError] = useState(null);
-  const [newData, setNewData] = useState({ name: JSON.parse(name), email: (email) });
+  const [newData, setNewData] = useState({ name: "", email: "" });
   const [isEditingProfile, setIsEditingProfile] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [avatar, setAvatar] = useState('avatar1');
-  const [previousAvatar, setPreviousAvatar] = useState(avatar);
+  const [avatar, setAvatar] = useState(`https://${ip}/avatar/avatar1.png`);
+  console.log(avatar);
+  const [previousAvatar, setPreviousAvatar] = useState(null);
+
 
   useEffect(() => {
     const getData = async () => {
@@ -27,36 +27,27 @@ const Profile = ({ navigation }) => {
         const storedName = await AsyncStorage.getItem('name');
         const storedEmail = await AsyncStorage.getItem('email');
         const storedDeviceID = await AsyncStorage.getItem('api');
-        const storedAvatar = await AsyncStorage.getItem('avatar');
-        setName(storedName);
-        setEmail(storedEmail);
-        setDeviceID(storedDeviceID);
-        setNewData({ name: JSON.parse(storedName), email: storedEmail });
-        const avatarString = storedAvatar; // removed JSON.parse
-        if (avatarString === 'avatar1') {
-          setAvatar('avatar1');
-        } else if (avatarString === 'avatar3') {
-          setAvatar('avatar3');
-        } else {
-          setAvatar('avatar1');
-        }
+        const storedAvatar = await AsyncStorage.getItem('avatar');;
+        if (storedName) setName(storedName);
+        if (storedEmail) setEmail(storedEmail);
+        if (storedDeviceID) setDeviceID(storedDeviceID);
+        if (storedAvatar) setAvatar(storedAvatar);
+        // console.log(storedName, storedEmail, storedDeviceID);
       } catch (error) {
-        console.log(error);
+        console.log('error @profile ', error);
       }
-    };
+    }
     getData();
   }, []);
   //
-  const handleAvatarChange = async () => {
-    let newAvatar = avatar === 'avatar1' ? 'avatar3' : 'avatar1';
-    setAvatar(newAvatar);
-    try {
-      await AsyncStorage.setItem('avatar', newAvatar);
-    } catch (error) {
-      console.log(error);
+  const handleAvatarChange = () => {
+    setPreviousAvatar(avatar);
+    if (avatar === `https://${ip}/avatar/avatar1.png`) {
+      setAvatar(`https://${ip}/avatar/avatar3.png`);
+    } else {
+      setAvatar(`https://${ip}/avatar/avatar1.png`);
     }
   };
-  //
   const handleProfileChange = async () => {
     Alert.alert(
       'Select Profile Picture',
@@ -70,7 +61,7 @@ const Profile = ({ navigation }) => {
               alert('Sorry, we need camera permissions to make this work!');
               return;
             }
-  
+
             let result = await ImagePicker.launchCameraAsync({
               mediaTypes: ImagePicker.MediaTypeOptions.Images,
               cameraType: ImagePicker.CameraType.front,
@@ -78,13 +69,13 @@ const Profile = ({ navigation }) => {
               aspect: [1, 1],
               quality: 1,
             });
-  
+
             if (!result.canceled) {
               setPreviousAvatar(avatar);
               const uri = result.assets[0].uri;
               setAvatar(uri);
-              await AsyncStorage.setItem('avatar', uri);
-            }
+              await AsyncStorage.setItem('avatarTemp', uri);
+            } 
             else if (result.canceled) {
               setAvatar(previousAvatar);
             }
@@ -98,7 +89,7 @@ const Profile = ({ navigation }) => {
               alert('Sorry, we need gallery permissions to make this work!');
               return;
             }
-  
+        
             let result = await ImagePicker.launchImageLibraryAsync({
               mediaTypes: ImagePicker.MediaTypeOptions.Images,
               cameraType: ImagePicker.CameraType.front,
@@ -106,13 +97,13 @@ const Profile = ({ navigation }) => {
               aspect: [1, 1],
               quality: 1,
             });
-  
+            
             if (!result.canceled) {
               setPreviousAvatar(avatar);
               const uri = result.assets[0].uri;
               setAvatar(uri);
-              await AsyncStorage.setItem('avatar', uri);
-            }
+              await AsyncStorage.setItem('avatarTemp', uri);
+            } 
             else if (result.canceled) {
               setAvatar(previousAvatar);
             }
@@ -126,29 +117,23 @@ const Profile = ({ navigation }) => {
   const handleEditProfile = () => {
     setLoading(true);
     setTimeout(() => {
-      setPreviousAvatar(avatar);
       setIsEditingProfile(true);
       setLoading(false);
       setError(null);
     }, 500);
-  };
-  //
-  const handleCancelEditProfile = async () => {
+  }
+  const handleCancelEditProfile = () => {
     setLoading(true);
-    setTimeout(async () => {
-      if (previousAvatar) {
-        try {
-          await AsyncStorage.setItem('avatar', previousAvatar);
-          setAvatar(previousAvatar);
-        } catch (error) {
-          console.log(error);
-        }
-      }
+    setTimeout(() => {
+      if(previousAvatar){
+        setAvatar(previousAvatar);
+        AsyncStorage.setItem('avatar', previousAvatar);
+      } 
       setIsEditingProfile(false);
       setLoading(false);
       setError(null);
     }, 500);
-  };
+  }
 
   const saveProfile = () => {
     if (newData.name === null || newData.email === null) {
@@ -177,7 +162,7 @@ const Profile = ({ navigation }) => {
               setError(data.error);
             } else {
               setLoading(true);
-              setTimeout(async () => {
+              setTimeout(async() => {
                 setError(null);
                 setIsEditingProfile(false);
                 setName(JSON.stringify(newData.name));
@@ -224,7 +209,7 @@ const Profile = ({ navigation }) => {
             <View style={styles.coverImage}>
               <View style={styles.avatarContainer}>
                 <Image
-                  source={avatar === 'avatar1' ? avatar1 : avatar3}
+                  source={{ uri: avatar }}
                   style={styles.avatar}
                   resizeMode="contain"
                 />
@@ -252,16 +237,7 @@ const Profile = ({ navigation }) => {
                     <Text style={{ color: "#fff" }}>Email</Text>
                   </View>
                   <View style={styles.infoLabel}>
-                    <TextInput style={styles.infoValue} onPressIn={() => setError(null)} onChangeText={(text) => {
-                      if (validateEmail(text)) {
-                        setNewData({ ...newData, email: text });
-                      } else {
-                        setError("Invalid email address");
-                      }
-                    }}
-                    >
-                      {email}
-                    </TextInput>
+                    <TextInput style={styles.infoValue} onPressIn={() => setError(null)} onChangeText={(text) => setNewData({ ...newData, email: text.toLowerCase() })}>{(email)}</TextInput>
                   </View>
                   {error && <Text style={error1}>{error}</Text>}
                   <TouchableOpacity onPress={saveProfile}>
@@ -285,9 +261,8 @@ const Profile = ({ navigation }) => {
               <View style={styles.coverImage}>
                 <View style={styles.avatarContainer}>
                   <Image
-                    source={avatar === 'avatar1' ? avatar1 : avatar3}
+                    source={{ uri: avatar }}
                     style={styles.avatar}
-                    resizeMode="contain"
                   />
                   <Text style={[styles.name, styles.textWithShadow]}>{JSON.parse(name)}</Text>
                 </View>
@@ -359,7 +334,7 @@ const styles = StyleSheet.create({
     color: '#252732'
   },
   textWithShadow: {
-    textShadowColor: 'rgba(0, 0, 0, 0.25)',
+    textShadowColor: 'rgba(0, 0, 0, 0.50)',
     textShadowOffset: { width: 1, height: 1 },
     textShadowRadius: 5,
   },
@@ -430,9 +405,11 @@ const styles = StyleSheet.create({
   button1: {
     color: "#c0c5cb",
     alignSelf: "center",
-    bottom: 70,
+    bottom: 52,
     fontSize: 18,
     fontWeight: "bold",
   },
+
 });
+
 export default Profile;

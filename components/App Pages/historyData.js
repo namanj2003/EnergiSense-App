@@ -1,94 +1,90 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Animated, FlatList, Text, TouchableOpacity, View, StyleSheet, ActivityIndicator } from "react-native";
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import MyArcProgress from "./gauge";
-import Paginator from "./paginate";
+import ip from "../ip"
+// import MyArcProgress from "./gauge";
+// import Paginator from "./paginate";
+import { MaterialIcons, FontAwesome5  } from 'react-native-vector-icons';
 import { Dimensions } from 'react-native';
-import { loader } from "../../css/loadercss";
-import ip from "../ip";
-import { navIconContainer, navText, topNav } from "../../css/pagecss";
+// import { loader } from "../../css/loadercss";
+import { navIcon, navIconContainer, navText, topNav } from "../../css/pagecss";
 
 const { width: screenWidth } = Dimensions.get('window');
 
-function HistoryData({ navigation }) {
+function Homepage({ navigation }) {
   const [loading, setLoading] = useState(false);
-  const [filteredData, setFilteredData] = useState({
-    v0: { live: [], oneHour: [], sixHours: [], oneDay: [], oneWeek: [], oneMonth: [], threeMonths: [] },
-    v1: { live: [], oneHour: [], sixHours: [], oneDay: [], oneWeek: [], oneMonth: [], threeMonths: [] },
-    v2: { live: [], oneHour: [], sixHours: [], oneDay: [], oneWeek: [], oneMonth: [], threeMonths: [] },
-    v3: { live: [], oneHour: [], sixHours: [], oneDay: [], oneWeek: [], oneMonth: [], threeMonths: [] },
-  });
+  const [deviceData, setDeviceData] = useState([]);
+  // const scrollX = useRef(new Animated.Value(0)).current;
+  // const slidesRef = useRef(null);
+  const initialLoadingRef = useRef(true);
 
-  useEffect(() => {
-    const sendDeviceHistory = async () => {
-      const storedApi = await AsyncStorage.getItem('api');
-      const token = localStorage.getItem('jwt');
-      const response = await fetch(`https://${ip}/historydata-get/deviceID=${storedApi}`, {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
-
-      const data = await response.json();
-
-      const now = moment();
-      const timePeriods = ['live', 'oneHour', 'sixHours', 'oneDay', 'oneWeek', 'oneMonth', 'threeMonths'];
-      const variables = ['v0', 'v1', 'v2', 'v3'];
-      const filters = {
-        live: item => moment(item.timeStamp).isSame(now, 'minute'),
-        oneHour: item => moment(item.timeStamp).isAfter(now.subtract(1, 'hours')),
-        sixHours: item => moment(item.timeStamp).isAfter(now.subtract(6, 'hours')),
-        oneDay: item => moment(item.timeStamp).isAfter(now.subtract(1, 'days')),
-        oneWeek: item => moment(item.timeStamp).isAfter(now.subtract(1, 'weeks')),
-        oneMonth: item => moment(item.timeStamp).isAfter(now.subtract(1, 'months')),
-        threeMonths: item => moment(item.timeStamp).isAfter(now.subtract(3, 'months')),
-      };
-
-      const filteredData = {};
-      for (const variable of variables) {
-        filteredData[variable] = {};
-        for (const period of timePeriods) {
-          filteredData[variable][period] = data.filter(filters[period]).map(item => item[variable]);
-        }
-      }
-      setFilteredData(filteredData);
-    }
-    sendDeviceHistory();
-    const intervalId = setInterval(sendDeviceHistory, 60000);
-    return () => clearInterval(intervalId);
-  }, []);
-
-  const flattenedData = deviceData.flatMap(item => [
-    { value: item.v0, max: 450, unit: "V", textName: "Voltage" },
-    { value: item.v1, max: 30, unit: "A", textName: "Current" },
-    { value: item.v2, max: 50, unit: "W", textName: "Power" },
-    { value: item.v3, max: 10, unit: "kWh", textName: "kWh" },
-  ]);
-  const renderItem = ({ item }) => {
-    const progress = (item.value / item.max) * 100;
-    const text = `${parseFloat(item.value).toFixed(3)} ${item.unit}`;
-    const text2 = `${item.textName}`;
-    return (<View style={styles.dataContainer}>
-      <MyArcProgress progress={progress} text={text} text2={text2} max={item.max} />
-    </View>
-    );
-  };
   const helpPage = () => {
     navigation.navigate('Help');
   }
+
+  useEffect(() => {
+    const fetchDeviceData = async () => {
+      try {
+        if (initialLoadingRef.current) {
+          setLoading(true);
+        }
+        const storedApi = await AsyncStorage.getItem('api');
+        const token = await AsyncStorage.getItem('token');
+        const response = await fetch(`https://${ip}/historydata-get?deviceID=${storedApi}`,{
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + token
+          },
+        });
+        // if (!response.ok) {
+        //   throw new Error('Network response was not ok');
+        // }
+        const data = await response.json();
+        setDeviceData([data]);
+        console.log("History Data From Device : ", deviceData);
+        if (initialLoadingRef.current) {
+          initialLoadingRef.current = false;
+          setLoading(false);
+        }
+      } catch (error) {
+        console.log("Unable to get Data From Device : ", error);
+      }
+    }
+    fetchDeviceData();
+    const intervalId = setInterval(fetchDeviceData, 5000);
+    return () => clearInterval(intervalId);
+  }, []);
+
+  // const flattenedData = deviceData.flatMap(item => [
+  //   { value: item.v0, max: 450, unit: "V", textName: "Voltage" },
+  //   { value: item.v1, max: 30, unit: "A", textName: "Current" },
+  //   { value: item.v2, max: 50, unit: "W", textName: "Power" },
+  //   { value: item.v3, max: 10, unit: "kWh", textName: "kWh" },
+  // ]);
+  // const renderItem = ({ item }) => {
+  //   const progress = (item.value / item.max) * 100;
+  //   const text = `${parseFloat(item.value).toFixed(3)} ${item.unit}`;
+  //   const text2 = `${item.textName}`;
+  //   return (
+  //   <View style={styles.dataContainer}>
+  //     <MyArcProgress progress={progress} text={text} text2={text2} max={item.max} />
+  //   </View>
+  //   );
+  // };
+
   return (
     <View style={styles.container}>
       <View style={topNav}>
         <Text style={navText}>EnergiSense</Text>
-        <TouchableOpacity onPress={helpPage} style={[navIconContainer, { alignSelf: "flex-end" }]}>
+        <TouchableOpacity onPress={helpPage} style={[navIconContainer,{alignSelf: "flex-end"}]}>
           {/* <MaterialIcons name="support-agent" size={35} color="#c0c5cb" style={styles.help}/> */}
-          <FontAwesome5 name="headset" size={24} color="#c0c5cb" style={[navIcon, { right: 25 }]} />
+          <FontAwesome5 name="headset" size={24} color="#c0c5cb" style={[navIcon,{right: 25}]}/>
         </TouchableOpacity>
       </View>
-      {loading ? (
+      {/* {loading ? (
         <ActivityIndicator size="large" color="#fff" style={loader} />) : (
-        <View style={{ flex: 1 }}>
+        <View style={{ flex: 1}}>
           <FlatList
             data={flattenedData}
             renderItem={renderItem}
@@ -102,23 +98,22 @@ function HistoryData({ navigation }) {
             scrollEventThrottle={32}
             ref={slidesRef}
           />
+          <View style={styles.paginationContainer}>
           <Paginator style={styles.pagination} data={flattenedData} scrollX={scrollX} />
+          </View>
         </View>
-      )}
+      )} */}
     </View>
   )
 }
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    width: "100%",
+    height: "100%",
     backgroundColor: "#17181F",
     alignItems: "center",
     justifyContent: "center",
-  },
-  content: {
-    marginTop: 50,
-    fontSize: 30,
-    color: "white",
   },
   button1: {
     color: "white",
@@ -129,7 +124,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   data: {
-    // flex: 1,
     width: "100%",
     marginLeft: "auto",
     marginRight: "auto",
@@ -139,10 +133,14 @@ const styles = StyleSheet.create({
     fontSize: 30,
     bottom: "45%",
   },
+  paginationContainer: {
+    flexDirection: "row",
+    position: "absolute",
+    bottom: 200,
+    alignSelf: "center",
+  },
   pagination: {
-
-    // position:"absolute",
-    bottom: 20,
+    bottom: 50,
     flexDirection: "row",
     height: 64,
     alignItems: "center",
@@ -151,4 +149,4 @@ const styles = StyleSheet.create({
   },
 
 });
-export default HistoryData;
+export default Homepage;

@@ -48,6 +48,8 @@ function Login({ navigation }) {
                 await AsyncStorage.setItem('api', data.apikey.deviceID);
                 await AsyncStorage.setItem('email', data.apikey.email);
                 await AsyncStorage.setItem('name', JSON.stringify(data.apikey.name));
+                await AsyncStorage.setItem('token', data.token);
+                console.log('data.token', data.token);
                 // console.log('data.apikey.id', data.apikey.deviceID);
                 // console.log('data.apikey.email', data.apikey.email);
                 // console.log('data.apikey.name', data.apikey.name);
