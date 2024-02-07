@@ -16,7 +16,6 @@ function Homepage({ navigation }) {
   const [deviceData, setDeviceData] = useState([]);
   // const scrollX = useRef(new Animated.Value(0)).current;
   // const slidesRef = useRef(null);
-  const initialLoadingRef = useRef(true);
 
   const helpPage = () => {
     navigation.navigate('Help');
@@ -25,30 +24,26 @@ function Homepage({ navigation }) {
   useEffect(() => {
     const fetchDeviceData = async () => {
       try {
-        if (initialLoadingRef.current) {
-          setLoading(true);
-        }
+        setLoading(true);
         const storedApi = await AsyncStorage.getItem('api');
         const token = await AsyncStorage.getItem('token');
         const response = await fetch(`https://${ip}/historydata-get?deviceID=${storedApi}`,{
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + token
+            'Authorization': `Bearer ${token}`
           },
         });
-        // if (!response.ok) {
-        //   throw new Error('Network response was not ok');
-        // }
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
         const data = await response.json();
         setDeviceData([data]);
         console.log("History Data From Device : ", deviceData);
-        if (initialLoadingRef.current) {
-          initialLoadingRef.current = false;
-          setLoading(false);
-        }
+        setLoading(false);
       } catch (error) {
         console.log("Unable to get Data From Device : ", error);
+        setLoading(true);
       }
     }
     fetchDeviceData();

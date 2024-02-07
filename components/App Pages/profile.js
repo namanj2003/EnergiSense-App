@@ -17,9 +17,8 @@ const Profile = ({ navigation }) => {
   const [isEditingProfile, setIsEditingProfile] = useState(false);
   const [loading, setLoading] = useState(false);
   const [avatar, setAvatar] = useState(`https://${ip}/avatar/avatar1.png`);
-  console.log(avatar);
+  const [avatarTemp, setAvatarTemp] = useState(null);
   const [previousAvatar, setPreviousAvatar] = useState(null);
-
 
   useEffect(() => {
     const getData = async () => {
@@ -27,16 +26,24 @@ const Profile = ({ navigation }) => {
         const storedName = await AsyncStorage.getItem('name');
         const storedEmail = await AsyncStorage.getItem('email');
         const storedDeviceID = await AsyncStorage.getItem('api');
-        const storedAvatar = await AsyncStorage.getItem('avatar');;
+        let storedAvatar = await AsyncStorage.getItem('avatarTemp');
+  
         if (storedName) setName(storedName);
         if (storedEmail) setEmail(storedEmail);
         if (storedDeviceID) setDeviceID(storedDeviceID);
-        if (storedAvatar) setAvatar(storedAvatar);
-        // console.log(storedName, storedEmail, storedDeviceID);
+  
+        if (!storedAvatar) {
+          // If no avatar is stored, set the default avatar
+          storedAvatar = `https://${ip}/avatar/avatar1.png`;
+          await AsyncStorage.setItem('avatarTemp', storedAvatar);
+        }
+  
+        setAvatar(storedAvatar);
       } catch (error) {
         console.log('error @profile ', error);
       }
-    }
+    };
+  
     getData();
   }, []);
   //
@@ -44,10 +51,13 @@ const Profile = ({ navigation }) => {
     setPreviousAvatar(avatar);
     if (avatar === `https://${ip}/avatar/avatar1.png`) {
       setAvatar(`https://${ip}/avatar/avatar3.png`);
+      AsyncStorage.setItem('avatarTemp', `https://${ip}/avatar/avatar3.png`);
     } else {
       setAvatar(`https://${ip}/avatar/avatar1.png`);
+      AsyncStorage.setItem('avatarTemp', `https://${ip}/avatar/avatar1.png`);
     }
   };
+  //
   const handleProfileChange = async () => {
     Alert.alert(
       'Select Profile Picture',
@@ -75,7 +85,7 @@ const Profile = ({ navigation }) => {
               const uri = result.assets[0].uri;
               setAvatar(uri);
               await AsyncStorage.setItem('avatarTemp', uri);
-            } 
+            }
             else if (result.canceled) {
               setAvatar(previousAvatar);
             }
@@ -89,7 +99,7 @@ const Profile = ({ navigation }) => {
               alert('Sorry, we need gallery permissions to make this work!');
               return;
             }
-        
+
             let result = await ImagePicker.launchImageLibraryAsync({
               mediaTypes: ImagePicker.MediaTypeOptions.Images,
               cameraType: ImagePicker.CameraType.front,
@@ -97,13 +107,13 @@ const Profile = ({ navigation }) => {
               aspect: [1, 1],
               quality: 1,
             });
-            
+
             if (!result.canceled) {
               setPreviousAvatar(avatar);
               const uri = result.assets[0].uri;
               setAvatar(uri);
               await AsyncStorage.setItem('avatarTemp', uri);
-            } 
+            }
             else if (result.canceled) {
               setAvatar(previousAvatar);
             }
@@ -125,10 +135,10 @@ const Profile = ({ navigation }) => {
   const handleCancelEditProfile = () => {
     setLoading(true);
     setTimeout(() => {
-      if(previousAvatar){
+      if (previousAvatar) {
         setAvatar(previousAvatar);
         AsyncStorage.setItem('avatar', previousAvatar);
-      } 
+      }
       setIsEditingProfile(false);
       setLoading(false);
       setError(null);
@@ -136,7 +146,7 @@ const Profile = ({ navigation }) => {
   }
 
   const saveProfile = () => {
-    if (newData.name === null || newData.email === null) {
+    if (newData.name === null || newData.email === null || newData.name !== JSON.parse(name) || newData.email !== (email)) {
       setError("All fields are required");
       return;
     } else {
@@ -157,22 +167,22 @@ const Profile = ({ navigation }) => {
             }
             return res.json();
           })
-          .then((data) => {
+          .then(async (data) => {
             if (data.error) {
               setError(data.error);
             } else {
               setLoading(true);
-              setTimeout(async() => {
-                setError(null);
-                setIsEditingProfile(false);
-                setName(JSON.stringify(newData.name));
-                await AsyncStorage.setItem('name', JSON.stringify(newData.name));
-                setEmail(newData.email);
-                await AsyncStorage.setItem('email', newData.email);
-                await AsyncStorage.setItem('avatarTemp', avatar);
+              setError(null);
+              setIsEditingProfile(false);
+              setName(JSON.stringify(newData.name));
+              await AsyncStorage.setItem('name', JSON.stringify(newData.name));
+              setEmail(newData.email);
+              await AsyncStorage.setItem('email', newData.email);
+              await AsyncStorage.setItem('avatarTemp', avatar);
+              console.log(data);
+              if (data.message === "Profile updated successfully") {
                 setLoading(false);
-                console.log(data);
-              }, 500);
+              }
             }
           })
           .catch((error) => {
@@ -194,6 +204,9 @@ const Profile = ({ navigation }) => {
       await AsyncStorage.removeItem('email');
       await AsyncStorage.removeItem('api');
       await AsyncStorage.removeItem('alreadyLoggedIn');
+      await AsyncStorage.removeItem('token');
+      await AsyncStorage.removeItem('avatar');
+      await AsyncStorage.removeItem('avatarTemp');
       navigation.navigate("Login");
     }
     catch (error) {
@@ -252,9 +265,6 @@ const Profile = ({ navigation }) => {
                     </View>
                   </TouchableOpacity>
                 </View>
-                <TouchableOpacity onPress={handleLogout}>
-                  <Text style={styles.button1}>Logout</Text>
-                </TouchableOpacity>
               </>)}
           </>) : (
             <>
@@ -263,6 +273,7 @@ const Profile = ({ navigation }) => {
                   <Image
                     source={{ uri: avatar }}
                     style={styles.avatar}
+                    resizeMode="contain"
                   />
                   <Text style={[styles.name, styles.textWithShadow]}>{JSON.parse(name)}</Text>
                 </View>
@@ -291,7 +302,7 @@ const Profile = ({ navigation }) => {
                     </TouchableOpacity>
                   </View>
                   <TouchableOpacity onPress={handleLogout}>
-                    <Text style={styles.button1}>Logout</Text>
+                    <Text style={styles.logoutButton}>Logout</Text>
                   </TouchableOpacity>
                 </>)}
             </>)}
@@ -306,17 +317,15 @@ const styles = StyleSheet.create({
     backgroundColor: '#17181F',
   },
   coverImage: {
-    height: 220,
+    height: 200,
     width: "100%",
-    margin: 0,
     backgroundColor: "#1295b8",
     // backgroundColor:"#ff6346",
     // backgroundColor:"#094151",
   },
   avatarContainer: {
     alignItems: 'center',
-    marginTop: 40,
-    padding: 10,
+    padding: 20,
   },
   avatar: {
     width: 130,
@@ -402,12 +411,13 @@ const styles = StyleSheet.create({
     fontSize: 17,
     fontWeight: 'bold',
   },
-  button1: {
-    color: "#c0c5cb",
+  logoutButton: {
+    // color: "#c0c5cb",
     alignSelf: "center",
     bottom: 52,
     fontSize: 18,
     fontWeight: "bold",
+    color: "#fa6400",
   },
 
 });
