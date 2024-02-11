@@ -10,6 +10,7 @@ import ForgotPass2 from "../components/Login&SignUP/forgotpass2";
 import Onboarding from "./onboarding/onboarding";
 import BottomTabs from "./App Pages/Navigation/tabs";
 import Help from "./App Pages/help&support";
+import ChangePassword from "./App Pages/changePassword";
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { ActivityIndicator, View } from "react-native";
@@ -21,34 +22,12 @@ function Pathfile() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const Stack = createStackNavigator();
 
-  // const checkOnboarding = async () => {
-  //   try {
-  //     const value = await AsyncStorage.getItem('alreadyLaunched');
-  //     if (value !== null) {
-  //       setAlreadyLaunched(true);
-  //     }
-  //   } catch (error) {
-  //     console.log('error @checkOnboarding: ', error);
-  //   }
-  // };
-
-  // const checkLogin = async () => {
-  //   try {
-  //     const value = await AsyncStorage.getItem('alreadyLoggedIn');
-  //     if (value !== null) {
-  //       setAlreadyLoggedIn(true);
-  //     }
-  //   } catch (error) {
-  //     console.log('error @checkLogin: ', error);
-  //   }
-  // };
-
   useEffect(() => {
     const checkOnboarding = async () => {
       const alreadyOnboarded = await AsyncStorage.getItem('alreadyOnboarded');
       const alreadyLoggedIn = await AsyncStorage.getItem('alreadyLoggedIn');
-      console.log('alreadyOnboarded:', alreadyOnboarded); // Add this line
-      console.log('alreadyLoggedIn:', alreadyLoggedIn); // Add this line
+      console.log('alreadyOnboarded:', alreadyOnboarded);
+      console.log('alreadyLoggedIn:', alreadyLoggedIn);
       setIsOnboarded(alreadyOnboarded === 'true');
       setIsLoggedIn(alreadyLoggedIn === 'true');
       setIsLoading(false);
@@ -77,6 +56,7 @@ function Pathfile() {
           <Stack.Screen name="ForgotPass2" component={ForgotPass2} options={{ headerShown: false }} />
           <Stack.Screen name="BottomNav" component={BottomTabs} options={{ headerShown: false }} />
           <Stack.Screen name="Help" component={Help} options={{ headerShown: false }} />
+          <Stack.Screen name="ChangePassword" component={ChangePassword} options={{ headerShown: false }} />
         </Stack.Navigator>
       </NavigationContainer>
     )
@@ -92,6 +72,7 @@ function Pathfile() {
           <Stack.Screen name="ForgotPass2" component={ForgotPass2} options={{ headerShown: false }} />
           <Stack.Screen name="BottomNav" component={BottomTabs} options={{ headerShown: false }} />
           <Stack.Screen name="Help" component={Help} options={{ headerShown: false }} />
+          <Stack.Screen name="ChangePassword" component={ChangePassword} options={{ headerShown: false }} />
         </Stack.Navigator>
       </NavigationContainer>
     )
@@ -106,6 +87,7 @@ function Pathfile() {
         <Stack.Screen name="ForgotPass1" component={ForgotPass1} options={{ headerShown: false }} />
         <Stack.Screen name="ForgotPass2" component={ForgotPass2} options={{ headerShown: false }} />
         <Stack.Screen name="Help" component={Help} options={{ headerShown: false }} />
+        <Stack.Screen name="ChangePassword" component={ChangePassword} options={{ headerShown: false }} />        
       </Stack.Navigator>
     </NavigationContainer>
   );

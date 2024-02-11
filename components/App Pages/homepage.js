@@ -21,6 +21,14 @@ function Homepage({ navigation }) {
     navigation.navigate('Help');
   }
 
+  
+  // useEffect(() => {
+  //   const backPress = navigation.addListener('beforeRemove', (e) => {
+  //     e.preventDefault();
+  //   });
+  //   return backPress;
+  // }, [navigation]);
+
   useEffect(() => {
     const fetchDeviceData = async () => {
       try {
@@ -126,7 +134,7 @@ const styles = StyleSheet.create({
   paginationContainer: {
     flexDirection: "row",
     position: "absolute",
-    bottom: 0,
+    bottom: 15,
     alignSelf: "center",
   },
   pagination: {

@@ -25,7 +25,7 @@ const Help = ({ navigation }) => {
         { question: 'Is EnergiSense compatible with all types of Smart Energy Meters?', answer: 'The simple answer would be NO. The EnergiSense App is only available for EnergiSense Smart Meter’s' },
         { question: 'Can I use EnergiSense without a Smart Energy Meter?', answer: 'No, EnergiSense is only compatible with EnergiSense Smart Energy Meters.' },
         { question: 'Can I use EnergiSense App without an Internet Connection?', answer: 'No, EnergiSense App requires an Internet Connection to function.' },
-        { question: 'Can I use EnergiSense Smart Meter without a Smartphone?', answer: 'Yes, But it has certian limitations. You can only check your live data on the Display of your Smart Meter.' },
+        { question: 'Can I use EnergiSense Smart Meter without a Smartphone?', answer: 'Yes, But it has certain limitations. You can only check your live data on the Display of your Smart Meter.' },
         {question: 'What will happen if I change my phone?', answer: 'You can simply login to your new phone with the same credentials and you will be able to access your data.'},
         {question: 'What will happen if I change my Smart Meter?', answer: 'Since each Device ID is binded to your Email and only one Device can be used with one Email ID, you contact us at EnergiSenseApp@gmail.com and we will help you with the process.'},
 
@@ -34,7 +34,7 @@ const Help = ({ navigation }) => {
     ];
 
     const handleBack = () => {
-        navigation.navigate('Home');
+        navigation.goBack();
     }
     return (
         <View style={styles.container}>
@@ -69,7 +69,7 @@ const Help = ({ navigation }) => {
                                         onPress: () => Linking.openURL(`mailto:EnergiSenseApp@gmail.com?subject= User's Device ID - ${deviceID}`)
                                     },
                                     {
-                                        pattern: /Profile Section/,
+                                        pattern: /Profile/,
                                         style: { color: 'tomato', marginVertical: -3 },
                                         onPress: () => navigation.navigate('Profile')
                                     },
@@ -81,8 +81,13 @@ const Help = ({ navigation }) => {
                                     {
                                         pattern: /Real-Time/,
                                         style: { color: 'tomato', marginVertical: -3 },
-                                        onPress: () => navigation.navigate('History')
+                                        onPress: () => navigation.navigate('BottomNav')
 
+                                    },
+                                    {
+                                        pattern: /Historical/,
+                                        style: { color: 'tomato', marginVertical: -3 },
+                                        onPress: () => navigation.navigate('History')
                                     }
                                 ]}>
                                 {item.answer}

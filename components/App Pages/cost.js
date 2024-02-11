@@ -17,7 +17,7 @@ const Cost = () => {
         const kwhData = parseFloat(data.v3).toFixed(3);
         setkWh(kwhData);
       } catch (error) {
-        console.error("Unable to get Data From Device : ", error);
+        console.log("Unable to get Data From Device : ", error);
       }
     }
     fetchDeviceData();

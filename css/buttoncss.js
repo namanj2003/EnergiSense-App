@@ -1,17 +1,18 @@
-module.exports={
-button1:{
+export const buttonContainer = {
+    marginTop: 50,
+    paddingVertical: 50,
+    paddingHorizontal: 30,
+    marginBottom: 50,
+}
+export const button1 = {
     borderRadius: 15,
     padding: 10,
     textAlign: "center",
     marginLeft: "auto",
     marginRight: "auto",
-    marginBottom: 50,
-    marginTop:"35%",
-    width:'95%',
-    fontSize: 15,
+    width: '100%',
+    fontSize: 17,
     fontWeight: "700",
     backgroundColor: "#326370",
     color: "#fff",
-    position: "relative",
-}
 }
