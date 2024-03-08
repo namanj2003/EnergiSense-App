@@ -13,7 +13,7 @@
     "@react-navigation/bottom-tabs": "^6.5.11",
     "@react-navigation/native": "^6.1.9",
     "@react-navigation/stack": "^6.3.20",
-    "apexcharts": "^3.45.2",
+    "apexcharts": "^3.47.0",
     "chokidar": "^3.6.0",
     "expo": "^50.0.6",
     "expo-cli": "^6.3.12",
