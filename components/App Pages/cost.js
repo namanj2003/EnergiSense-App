@@ -44,7 +44,7 @@ const Cost = () => {
     fixedCharge = 125;
     energyCharge = 10.86 * kwh;
   }
-  console.log(kwh)
+  // console.log(kwh)
   let wheelingCharge = 1.74 * kwh;
   let electricityDuty = 0.16 * (fixedCharge + energyCharge + wheelingCharge);
   let mTax = (26.04 / 100) * kwh;

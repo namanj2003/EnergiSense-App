@@ -72,7 +72,7 @@ function Login({ navigation }) {
         catch (err) {
           setLoading(false);
           setErrorMsg("Network request failed. Please check your internet connection and try again.");
-          console.log("Error Catcher:", err);
+          console.log("error@login:", err);
         };
   };
 

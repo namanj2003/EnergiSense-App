@@ -1,8 +1,10 @@
 import Pathfile from "./components/pathfile";
 export default function App() {
-  return(
+
+  LogBox.ignoreAllLogs();
+  return (
     <>
-  <Pathfile />
-  </>
-  ) 
+      <Pathfile />
+    </>
+  )
 }

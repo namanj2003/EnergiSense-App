@@ -35,13 +35,12 @@ function Onboarding() {
 
   const scrollTo = async () => {
     // console.log('scrollTo called, viewableItems is', viewableItems);
-    if (slidesRef.current && viewableItems.length > 0) {
-      // console.log('scrollTo called, current index is', viewableItems[0].index);
-      if (viewableItems[0].index < slides.length - 1) {
-        slidesRef.current.scrollToIndex({ index: viewableItems[0].index + 1, animated: true });
+    if (slidesRef.current && Array.isArray(viewableItems) && viewableItems.length > 0) {
+      const currentIndex = viewableItems[0].index;
+      if (currentIndex < slides.length - 1) {
+        slidesRef.current.scrollToIndex({ index: currentIndex + 1, animated: true });
       }
-      else if (viewableItems[0].index === slides.length - 1) {
-        // console.log('Calling completeOnboarding');
+      else if (currentIndex === slides.length - 1) {
         try {
           await completeOnboarding();
         } catch (error) {

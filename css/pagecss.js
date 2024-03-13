@@ -8,6 +8,7 @@ export const navText = {
     fontSize: 30,
     color: "#ffa840",
     fontWeight: "bold",
+    fontFamily:"OpenSans-Regular",
     textAlign: "center",
     textAlignVertical: "center",
     marginTop: 5,
