@@ -75,9 +75,9 @@ function Homepage({ navigation }) {
     <View style={styles.container}>
       <View style={topNav}>
         <Text style={navText}>EnergiSense</Text>
-        <TouchableOpacity onPress={helpPage} style={[navIconContainer,{alignSelf: "flex-end"}]}>
+        <TouchableOpacity onPress={helpPage} style={[navIconContainer,{right:25}]}>
           {/* <MaterialIcons name="support-agent" size={35} color="#c0c5cb" style={styles.help}/> */}
-          <FontAwesome5 name="headset" size={24} color="#c0c5cb" style={[navIcon,{right: 25}]}/>
+          <FontAwesome5 name="question-circle" size={24} color="#c0c5cb" style={navIcon}/>
         </TouchableOpacity>
       </View>
       {loading ? (

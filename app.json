@@ -8,7 +8,7 @@
     "userInterfaceStyle": "dark",
     "splash": {
       "image": "./assets/splash.png",
-      "resizeMode":"contain",
+      "resizeMode": "contain",
       "backgroundColor": "#17181F"
     },
     "assetBundlePatterns": [
@@ -26,6 +26,9 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "plugins": [
+      "expo-font"
+    ]
   }
 }

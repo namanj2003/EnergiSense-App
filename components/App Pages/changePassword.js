@@ -1,7 +1,7 @@
 import React, { Component, useEffect, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, TextInput, Button, ActivityIndicator } from 'react-native';
 import { navIcon, navIconContainer, navText, topNav } from '../../css/pagecss';
-import { AntDesign, MaterialIcons, Ionicons } from 'react-native-vector-icons';
+import { Ionicons } from 'react-native-vector-icons';
 import { content, error1, input, inputContainer } from '../../css/logincss';
 import { button1, buttonContainer } from '../../css/buttoncss';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -115,10 +115,10 @@ const ChangePassword = ({ navigation }) => {
     return (
         <View style={styles.container}>
             <View style={topNav}>
-                <Text style={navText}>Change Password</Text>
-                <TouchableOpacity onPress={handleBack} style={[navIconContainer, { alignSelf: "flex-start" }]}>
-                    <AntDesign name="arrowleft" size={30} color="#c0c5cb" style={[navIcon, { left: 25 }]} />
+                <TouchableOpacity onPress={handleBack} style={[navIconContainer,{left:25}]}>
+                    <Ionicons name="chevron-back-outline" size={24} color="#fff" style={navIcon} />
                 </TouchableOpacity>
+                <Text style={navText}>Change Password</Text>
             </View>
             {loading ? <ActivityIndicator size="large" color="#fff" style={loader} /> :
                 <>

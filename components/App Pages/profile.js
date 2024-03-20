@@ -341,8 +341,6 @@ const styles = StyleSheet.create({
     height: 200,
     width: "100%",
     backgroundColor: "#1295b8",
-    // backgroundColor:"#ff6346",
-    // backgroundColor:"#094151",
   },
   avatarContainer: {
     alignItems: 'center',
@@ -364,8 +362,6 @@ const styles = StyleSheet.create({
     color: '#252732'
   },
   textWithShadow: {
-    textShadowColor: 'rgba(0, 0, 0, 0.50)',
-    textShadowOffset: { width: 1, height: 1 },
     textShadowRadius: 5,
   },
   content: {

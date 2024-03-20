@@ -181,8 +181,8 @@ const HistoricalData = ({ navigation }) => {
     <View style={styles.container}>
       <View style={topNav}>
         <Text style={navText}>EnergiSense</Text>
-        <TouchableOpacity onPress={helpPage} style={[navIconContainer, { alignSelf: "flex-end" }]}>
-          <FontAwesome5 name="headset" size={24} color="#c0c5cb" style={[navIcon, { right: 25 }]} />
+        <TouchableOpacity onPress={helpPage} style={[navIconContainer, { right: 25 }]}>
+          <FontAwesome5 name="question-circle" size={26} color="#c0c5cb" style={navIcon} />
         </TouchableOpacity>
       </View>
       <View style={styles.dataContainer}>
@@ -204,7 +204,7 @@ const HistoricalData = ({ navigation }) => {
               renderItem={({ item }) => (
                 <View>
                   <MyChart
-                  style={styles.chart}
+                    style={styles.chart}
                     data={item.data}
                     title={`Historical ${item.title} Data`}
                     title2={item.title}
@@ -231,12 +231,12 @@ const HistoricalData = ({ navigation }) => {
               ))}
             </View>
             {/* <View style={styles.paginationContainer}> */}
-              <Paginator style={styles.pagination} data={chartData} scrollX={scrollX} />
+            <Paginator style={styles.pagination} data={chartData} scrollX={scrollX} />
             {/* </View> */}
           </View>
         )}
       </View>
-    </View>
+    </View >
   );
 };
 
@@ -259,9 +259,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    paddingBottom:130,
-    paddingTop:0,
-    marginTop: 0, 
+    paddingBottom: 100,
+    paddingTop: 10,
+    marginTop: 0,
+    fontWeight: 'bold',
   },
   filterButton: {
     paddingHorizontal: 12,
@@ -269,14 +270,16 @@ const styles = StyleSheet.create({
     backgroundColor: '#21222c',
     borderRadius: 8,
     marginHorizontal: 4,
-    // Ensure there's no top margin
+    fontWeight: 'bold',
   },
   selectedFilter: {
     backgroundColor: 'rgb(47, 52, 66)',
+    fontWeight: 'bold',
   },
   filterText: {
     color: '#fff',
     fontSize: 16,
+    fontWeight: 'bold',
   },
   dataContainer: {
     flex: 1,
@@ -292,18 +295,17 @@ const styles = StyleSheet.create({
   },
   paginationContainer: {
     flexDirection: "row",
-    // position: "absolute",
     bottom: 15,
     alignSelf: "center",
   },
-  pagination: {
-    bottom: 50,
-    // flexDirection: "row",
-    height: 5,
-    alignItems: "center",
-    justifyContent: "center",
-    // width: "100%",
-  },
+  // pagination: {
+  //   bottom: 50,
+  //   flexDirection: "row",
+  //   height: 5,
+  //   alignItems: "center",
+  //   justifyContent: "center",
+  //   width: "100%",
+  // },
 });
 
 export default HistoricalData;
