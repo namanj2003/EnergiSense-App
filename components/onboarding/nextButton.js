@@ -8,7 +8,7 @@ const NextButton = ({ scrollTo, isLastPage, completeOnboarding }) => {
   const navigate = async () => {
     try {
       await completeOnboarding();
-      navigation.navigate('Login');
+      navigation.replace('Login');
     } catch (error) {
       console.log('error @completeOnboarding: ', error);
     }

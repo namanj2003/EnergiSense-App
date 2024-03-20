@@ -9,14 +9,6 @@ import moment from "moment";
 import { LineChart } from "react-native-chart-kit";
 
 const Cost = ({ navigation }) => {
-  const [fontsLoaded] = useFonts({
-    OpenSans: OpenSans_400Regular,
-  });
-  
-  if (!fontsLoaded) {
-    return <ActivityIndicator />;
-  }
-
   const [kwh, setKwh] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
   const [selectedMonth, setSelectedMonth] = useState(null);
@@ -170,7 +162,7 @@ const Cost = ({ navigation }) => {
         </TouchableOpacity>
       </View >
       <View style={styles.container}>
-        <Text style={styles.heading}>Cost</Text>
+        <Text style={styles.heading}>Energy Cost</Text>
         <View style={styles.pickerContainer}>
           <View style={styles.pickerWrapper}>
             <Picker
@@ -202,11 +194,13 @@ const Cost = ({ navigation }) => {
           </View>
         </View>
         <Text style={styles.costText}>{costText}</Text>
+        <View style={{height:50}}>
         {loading ? (
           <ActivityIndicator size="large" color="#fff" style={styles.activityIndicator} />
         ) : (
           <Text style={styles.cost}>₹{totalCost}</Text>
         )}
+        </View>
         {showGraph && (
           <TouchableOpacity
             onPress={() => {
@@ -230,8 +224,11 @@ const Cost = ({ navigation }) => {
                 height={300}
                 yAxisLabel="₹"
                 fromZero={true}
+                yAxisInterval={5}
                 segments={5}
                 withVerticalLines={false}
+                xLabelsOffset={5}
+                yLabelsOffset={5}
                 onDataPointClick={({ index }) => {
                   setSelectedDotIndex(index);
                 }}
@@ -314,7 +311,7 @@ const styles = StyleSheet.create({
   pickerContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginBottom: screenWidth * 0.03,
+    marginVertical: screenWidth * 0.03,
   },
   pickerWrapper: {
     borderRadius: 100,
@@ -334,6 +331,7 @@ const styles = StyleSheet.create({
     borderRadius: 100,
   },
   costText: {
+    marginTop: screenWidth * 0.03,
     textAlign: "center",
     fontSize: 20,
     fontWeight: "bold",
@@ -341,18 +339,18 @@ const styles = StyleSheet.create({
   },
   cost: {
     textAlign: "center",
-    paddingVertical: screenWidth * 0.02,
+    paddingTop: screenWidth * 0.04,
     fontSize: 24,
     color: "#fff",
     fontWeight: "bold",
   },
   activityIndicator: {
-    paddingVertical: screenWidth * 0.02,
+    paddingVertical: screenWidth * 0.03,
     alignItems: "center",
     color: 'rgb(32, 33, 46)'
   },
   visualizeButton: {
-    backgroundColor: "#3498db",
+    backgroundColor: "#326370",
     paddingVertical: screenWidth * 0.03,
     borderRadius: 100,
     alignSelf: "center",
@@ -366,9 +364,6 @@ const styles = StyleSheet.create({
     color: "#ffffff",
     fontSize: 16,
     textAlign: "center",
-  },
-  graphContainer: {
-    // marginTop: screenWidth * 0.01,
   },
   graphHeading: {
     fontSize: 20,

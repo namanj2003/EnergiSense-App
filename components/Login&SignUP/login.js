@@ -56,7 +56,7 @@ function Login({ navigation }) {
                 await AsyncStorage.setItem('email', data.apikey.email);
                 await AsyncStorage.setItem('name', data.apikey.name);
                 await AsyncStorage.setItem('token', data.token);
-                console.log('data.token', data.token);
+                // console.log('data.token', data.token);
                 // console.log('data.apikey.id', data.apikey.deviceID);
                 // console.log('data.apikey.email', data.apikey.email);
                 // console.log('data.apikey.name', data.apikey.name);
@@ -65,8 +65,8 @@ function Login({ navigation }) {
               }
             }
             storeData();
-            console.log(data)
-            navigation.navigate("BottomNav");
+            // console.log(data)
+            navigation.replace("BottomNav");
           }
         }
         catch (err) {
@@ -91,14 +91,14 @@ function Login({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <Image style={styles.bg} source={bg} />
+      <Image style={styles.bg} source={bg} resizeMode='cover'/>
       {loading ? (
         <ActivityIndicator size="large" color="#fff" style={loader} />) : (
         <>
           <View style={[title, { marginTop: "15%", marginBottom: 40 }]}>
             <Text style={titleText}>Login</Text>
           </View>
-          <View style={[content]}>
+          <View style={content}>
             <View style={[inputContainer, { marginVertical: 15 }]}>
               <TextInput
                 style={input}

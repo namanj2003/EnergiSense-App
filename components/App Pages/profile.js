@@ -220,7 +220,7 @@ const handleLogout = async () => {
     await AsyncStorage.removeItem('token');
     await AsyncStorage.removeItem('avatar');
     await AsyncStorage.removeItem('avatarTemp');   
-    navigation.navigate('Login');
+    navigation.replace('Login');
   }
   catch (error) {
     console.log('error @logout ', error);

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { View, TextInput, Text, StyleSheet, Image, TouchableOpacity, ActivityIndicator, KeyboardAvoidingView, Platform, ScrollView, } from "react-native";
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import { content, error1, input, inputContainer, title, titleText } from "../../css/logincss";
+import { content, contentSignup, error1, input, inputContainer, title, titleText } from "../../css/logincss";
 import { button1, buttonContainer } from "../../css/buttoncss";
 import { MaterialIcons, Feather, Ionicons } from 'react-native-vector-icons';
 import ip from "../ip";
@@ -91,14 +91,14 @@ function Signup({ navigation }) {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Image style={styles.bg} source={bg} />
+      <Image style={styles.bg} source={bg} resizeMode="cover"/>
       {loading ? (
         <ActivityIndicator size="large" color="#fff" style={loader} />) : (
         <>
           <View style={title}>
             <Text style={titleText}>Sign Up</Text>
           </View>
-          <View style={content}>
+          <View style={contentSignup}>
 
             <View style={inputContainer}>
               <TextInput

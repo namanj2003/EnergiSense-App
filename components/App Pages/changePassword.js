@@ -99,7 +99,7 @@ const ChangePassword = ({ navigation }) => {
                             await AsyncStorage.removeItem('avatarTemp');
                         }
                         removeData();
-                        navigation.navigate("Login");
+                        navigation.replace("Login");
                     }
                     else if (data.message === "Current Password is Incorrect") {
                         setErrorMsg("Current Password is Incorrect");
@@ -161,7 +161,7 @@ const ChangePassword = ({ navigation }) => {
                         {errorMsg ? <Text style={error1}>{errorMsg}</Text> : null}
                     </View>
 
-                    <View style={[buttonContainer, { paddingTop: 90 }]}>
+                    <View style={styles.buttonContainer}>
                         <TouchableOpacity>
                             <Text style={[button1, { marginTop: 10 }]} onPress={handlePassChange}>Change Password</Text>
                         </TouchableOpacity>
@@ -183,6 +183,12 @@ const styles = StyleSheet.create({
         paddingHorizontal: 15,
         flexDirection: 'row',
         alignItems: 'center',
+    },
+    buttonContainer: {
+        paddingHorizontal: 20,
+        width: '100%',
+        position: 'absolute',
+        bottom: 30,
     },
 });
 

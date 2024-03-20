@@ -26,8 +26,8 @@ function Pathfile() {
     const checkOnboarding = async () => {
       const alreadyOnboarded = await AsyncStorage.getItem('alreadyOnboarded');
       const alreadyLoggedIn = await AsyncStorage.getItem('alreadyLoggedIn');
-      console.log('alreadyOnboarded:', alreadyOnboarded);
-      console.log('alreadyLoggedIn:', alreadyLoggedIn);
+      // console.log('alreadyOnboarded:', alreadyOnboarded);
+      // console.log('alreadyLoggedIn:', alreadyLoggedIn);
       setIsOnboarded(alreadyOnboarded === 'true');
       setIsLoggedIn(alreadyLoggedIn === 'true');
       setIsLoading(false);
@@ -80,7 +80,7 @@ function Pathfile() {
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName="BottomNav">
-        <Stack.Screen name="BottomNav" component={BottomTabs} options={{ headerShown: false }} />
+        <Stack.Screen name="BottomNav" component={BottomTabs} options={{ headerShown: false, gestureEnabled:false, headerLeft:null }} />
         <Stack.Screen name="Login" component={Login} options={{ headerShown: false }} />
         <Stack.Screen name="Signup" component={Signup} options={{ headerShown: false }} />
         <Stack.Screen name="Verify" component={Verify} options={{ headerShown: false }} />
