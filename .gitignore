@@ -33,7 +33,9 @@ yarn-error.*
 android/local.properties
 android/energisense-app.keystore
 
+#Folders Excluded/Not Needed
 Old_Onboarding/
+Avatar_Images/
 # typescript
 *.tsbuildinfo
 
