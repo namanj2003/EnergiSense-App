@@ -32,6 +32,8 @@ yarn-error.*
 .env*.local
 android/local.properties
 android/energisense-app.keystore
+
+Old_Onboarding/
 # typescript
 *.tsbuildinfo
 
