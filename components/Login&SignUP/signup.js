@@ -216,6 +216,7 @@ const styles = StyleSheet.create({
     color: "grey",
     textAlign: "center",
     paddingVertical: 5,
+    
   },
   signup2: {
     fontSize: 17,

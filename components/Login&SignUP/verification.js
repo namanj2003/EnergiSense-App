@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { View, TextInput, Text, StyleSheet, Image, TouchableOpacity, ScrollView, ActivityIndicator } from 'react-native';
+import { View, TextInput, Text, StyleSheet, Image, TouchableOpacity, ScrollView, ActivityIndicator, Dimensions } from 'react-native';
 import { content, error1, input, inputContainer, title, title1, title2 } from '../../css/logincss';
 import { button1, buttonContainer } from '../../css/buttoncss';
 import ip from '../ip';
 import { loader } from '../../css/loadercss';
 
+const { height, width } = Dimensions.get('window');
 function Verify({ navigation, route }) {
   const { userdata } = route.params;
   const [errorMsg, setErrorMsg] = useState(null);
@@ -95,14 +96,15 @@ function Verify({ navigation, route }) {
               />
             </View>
             {errorMsg ? <Text style={error1}>{errorMsg}</Text> : null}
-          </View>
-          <View style={[buttonContainer,{marginTop:10}]}>
+            </View>
+            <View style={[buttonContainer, { marginTop: height*0.25 }]}>
           <TouchableOpacity>
-            <Text style={button1} onPress={handleSignup} on>
+            <Text style={button1} onPress={handleSignup}>
               Verify
             </Text>
           </TouchableOpacity>
           </View>
+
         </>
       )}
     </View >
@@ -138,8 +140,10 @@ const styles = StyleSheet.create({
     fontSize: 17,
     fontWeight: "600",
     color: "grey",
+
     textAlign: "center",
     paddingVertical: 5,
+    paddingHorizontal: 25,
   },
   signup2: {
     fontSize: 17,

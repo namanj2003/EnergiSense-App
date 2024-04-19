@@ -56,10 +56,10 @@ function Homepage({ navigation }) {
   }, []);
 
   const flattenedData = deviceData.flatMap(item => [
-    { value: item.v0, max: 450, unit: "V", textName: "Voltage" },
+    { value: item.v0, max: 240, unit: "V", textName: "Voltage" },
     { value: item.v1, max: 30, unit: "A", textName: "Current" },
     { value: item.v2, max: 50, unit: "W", textName: "Power" },
-    { value: item.v3, max: 10, unit: "kWh", textName: "kWh" },
+    { value: item.v3, max: 100, unit: "kWh", textName: "kWh" },
   ]);
   const renderItem = ({ item }) => {
     const progress = (item.value / item.max) * 100;
