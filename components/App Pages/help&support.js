@@ -3,13 +3,11 @@ import { View, Text, StyleSheet, TouchableOpacity, Linking, ScrollView } from 'r
 import { Ionicons } from 'react-native-vector-icons';
 import { navIcon, navIconContainer, navText, topNav } from '../../css/pagecss';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useNavigation } from '@react-navigation/native';
 import ParsedText from 'react-native-parsed-text';
 
-const Help = () => {
+const Help = ({navigation}) => {
     const [selectedQuestion, setSelectedQuestion] = useState(null);
     const [deviceID, setDeviceID] = useState(null);
-    const navigation = useNavigation();
 
     useEffect(() => {
         const fetchData = async () => {
@@ -38,11 +36,7 @@ const Help = () => {
     ];
 
     const handleBack = () => {
-        if (navigation.canGoBack()) {
-            navigation.goBack();
-        } else {
-            navigation.navigate('Home');
-        }
+        navigation.goBack();
     };
 
     return (
@@ -77,7 +71,7 @@ const Help = () => {
                                         {
                                             pattern: /Profile/,
                                             style: { color: 'tomato', marginVertical: -3 },
-                                            onPress: () => navigation.navigate('Profile')
+                                            onPress: () => navigation.push('Profile')
                                         },
                                         {
                                             pattern: /Live/,
@@ -86,9 +80,8 @@ const Help = () => {
                                         },
                                         {
                                             pattern: /Real-Time/,
-                                            style: { color: 'tomato', marginVertical: -3 },
+                                            style: { color: 'tomato'},
                                             onPress: () => navigation.navigate('Home')
-
                                         },
                                         {
                                             pattern: /Historical/,

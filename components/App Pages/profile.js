@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, TextInput, ActivityIndicator, Alert } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity, TextInput, ActivityIndicator, Alert, Dimensions, Platform } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as ImagePicker from 'expo-image-picker';
 import ip from '../ip';
 import { error1 } from '../../css/logincss';
 import { loader } from '../../css/loadercss';
 import { MaterialCommunityIcons } from 'react-native-vector-icons';
-
+const { width, height } = Dimensions.get("window");
 const Profile = ({ navigation }) => {
 
   const [name, setName] = useState(null);
@@ -152,9 +152,9 @@ const Profile = ({ navigation }) => {
 
   const saveProfile = () => {
     console.log(newData.name)
-      console.log(newData.email)
+    console.log(newData.email)
     if (newData.name === null || newData.email === null || newData.name === "" || newData.email === "") {
-      setError("All fields are required");      
+      setError("All fields are required");
       return;
     } else {
       if (!validateEmail(newData.email)) {
@@ -162,125 +162,76 @@ const Profile = ({ navigation }) => {
         return;
       }
       else {
-      fetch(`https://${ip}/save-profile`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ ...newData, deviceID }),
-      })
-        .then((res) => {
-          if (!res.ok) {
-            throw new Error(`HTTP error! status: ${res.status}`);
-          }
-          return res.json();
+        fetch(`https://${ip}/save-profile`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ ...newData, deviceID }),
         })
-        .then(async (data) => {
-          if (data.error) {
-            setError(data.error);
-          } else {
-            setLoading(true);
-            setError(null);
-            setIsEditingProfile(false);
-            const cleanedName = newData.name.replace(/["']/g, "");
-            setName(cleanedName);
-            await AsyncStorage.setItem('name',(newData.name));
-            setEmail(newData.email);
-            await AsyncStorage.setItem('email', newData.email);
-            await AsyncStorage.setItem('avatarTemp', avatar);
-            console.log(data);
-            if (data.message === "Profile updated successfully") {
-              setLoading(false);
+          .then((res) => {
+            if (!res.ok) {
+              throw new Error(`HTTP error! status: ${res.status}`);
             }
-          }
-        })
-        .catch((error) => {
-          setError("Network request failed. Please check your internet connection and try again.");
-          console.log('error @saveProfile ', error);
-        });
+            return res.json();
+          })
+          .then(async (data) => {
+            if (data.error) {
+              setError(data.error);
+            } else {
+              setLoading(true);
+              setError(null);
+              setIsEditingProfile(false);
+              const cleanedName = newData.name.replace(/["']/g, "");
+              setName(cleanedName);
+              await AsyncStorage.setItem('name', (newData.name));
+              setEmail(newData.email);
+              await AsyncStorage.setItem('email', newData.email);
+              await AsyncStorage.setItem('avatarTemp', avatar);
+              console.log(data);
+              if (data.message === "Profile updated successfully") {
+                setLoading(false);
+              }
+            }
+          })
+          .catch((error) => {
+            setError("Network request failed. Please check your internet connection and try again.");
+            console.log('error @saveProfile ', error);
+          });
+      }
     }
   }
-}
 
-const validateEmail = (email) => {
-  const re = /\S+@\S+\.\S+/;
-  return re.test(email);
-}
-
-const handlePasswordChange = () => {
-  navigation.navigate('ChangePassword');
-}
-
-const handleLogout = async () => {
-  try {
-    await AsyncStorage.removeItem('name');
-    await AsyncStorage.removeItem('email');
-    await AsyncStorage.removeItem('api');
-    await AsyncStorage.removeItem('alreadyLoggedIn');
-    await AsyncStorage.removeItem('token');
-    await AsyncStorage.removeItem('avatar');
-    await AsyncStorage.removeItem('avatarTemp');   
-    navigation.replace('Login');
+  const validateEmail = (email) => {
+    const re = /\S+@\S+\.\S+/;
+    return re.test(email);
   }
-  catch (error) {
-    console.log('error @logout ', error);
-  }
-}
 
-return (
-  <>
-    <View style={styles.container}>
-      {isEditingProfile ?
-        (<>
-          <View style={styles.coverImage}>
-            <View style={styles.avatarContainer}>
-              <Image
-                source={{ uri: avatar }}
-                style={styles.avatar}
-                resizeMode="contain"
-              />
-              <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                <TouchableOpacity onPress={handleAvatarChange}>
-                  <Text style={[styles.name, styles.textWithShadow]}>Change Avatar</Text>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={handleProfileChange}>
-                  <Text style={[styles.name, styles.textWithShadow]}>Upload Image</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          </View>
-          {loading ? (
-            <ActivityIndicator size="large" color="#fff" style={loader} />) : (
-            <>
-              <View style={styles.content}>
-                <View style={[styles.labelContainer, { top: -30 }]}>
-                  <Text style={{ color: "#fff" }}>Name</Text>
-                </View>
-                <View style={styles.infoLabel}>
-                <TextInput style={styles.infoValue} onPressIn={() => setError(null)} onChangeText={(text) => setNewData({ ...newData, name: text.trim() })}>{(name)}</TextInput>
-                </View>
-                <View style={[styles.labelContainer, { top: 54 }]}>
-                  <Text style={{ color: "#fff" }}>Email</Text>
-                </View>
-                <View style={styles.infoLabel}>
-                  <TextInput style={styles.infoValue} onPressIn={() => setError(null)} onChangeText={(text) => setNewData({ ...newData, email: text.toLowerCase().replace(/\s/g, '') })}>{(email)}</TextInput>
-                </View>
-                {error && <Text style={error1}>{error}</Text>}
-                <TouchableOpacity onPress={saveProfile}>
-                  <View style={[styles.saveProfileContainer,{alignSelf: "flex-start"}]}>
-                    <MaterialCommunityIcons name="account-check" size={20} color="#c0c5cb" style={styles.editIcon} />
-                    <Text style={styles.editProfile}>Save Changes</Text>
-                  </View>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={handleCancelEditProfile}>
-                  <View style={[styles.editProfileContainer,{alignSelf: "flex-end"}]}>
-                    <Text style={[styles.editProfile,{paddingRight:5}]}>Cancel</Text>
-                  </View>
-                </TouchableOpacity>
-              </View>
-            </>)}
-        </>) : (
-          <>
+  const handlePasswordChange = () => {
+    navigation.navigate('ChangePassword');
+  }
+
+  const handleLogout = async () => {
+    try {
+      await AsyncStorage.removeItem('name');
+      await AsyncStorage.removeItem('email');
+      await AsyncStorage.removeItem('api');
+      await AsyncStorage.removeItem('alreadyLoggedIn');
+      await AsyncStorage.removeItem('token');
+      await AsyncStorage.removeItem('avatar');
+      await AsyncStorage.removeItem('avatarTemp');
+      navigation.replace('Login');
+    }
+    catch (error) {
+      console.log('error @logout ', error);
+    }
+  }
+
+  return (
+    <>
+      <View style={styles.container}>
+        {isEditingProfile ?
+          (<>
             <View style={styles.coverImage}>
               <View style={styles.avatarContainer}>
                 <Image
@@ -288,7 +239,14 @@ return (
                   style={styles.avatar}
                   resizeMode="contain"
                 />
-                <Text style={[styles.name, styles.textWithShadow]}>{name}</Text>
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                  <TouchableOpacity onPress={handleAvatarChange}>
+                    <Text style={[styles.name, styles.textWithShadow]}>Change Avatar</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity onPress={handleProfileChange}>
+                    <Text style={[styles.name, styles.textWithShadow]}>Upload Image</Text>
+                  </TouchableOpacity>
+                </View>
               </View>
             </View>
             {loading ? (
@@ -296,40 +254,82 @@ return (
               <>
                 <View style={styles.content}>
                   <View style={[styles.labelContainer, { top: -30 }]}>
+                    <Text style={{ color: "#fff" }}>Name</Text>
+                  </View>
+                  <View style={styles.infoLabel}>
+                    <TextInput style={styles.infoValue} onPressIn={() => setError(null)} onChangeText={(text) => setNewData({ ...newData, name: text.trim() })}>{(name)}</TextInput>
+                  </View>
+                  <View style={[styles.labelContainer, { top: 54 }]}>
                     <Text style={{ color: "#fff" }}>Email</Text>
                   </View>
                   <View style={styles.infoLabel}>
-                    <Text style={styles.infoValue}>{(email)}</Text>
+                    <TextInput style={styles.infoValue} onPressIn={() => setError(null)} onChangeText={(text) => setNewData({ ...newData, email: text.toLowerCase().replace(/\s/g, '') })}>{(email)}</TextInput>
                   </View>
-                  <View style={[styles.labelContainer, { top: 54 }]}>
-                    <Text style={{ color: "#fff" }}>Device ID</Text>
-                  </View>
-                  <View style={styles.infoLabel}>
-                    <Text style={styles.infoValue}>{deviceID}</Text>
-                  </View>
-                  <TouchableOpacity onPress={handleEditProfile}>
-                    <View style={[styles.editProfileContainer,{alignSelf: "flex-end",}]}>
-                      <MaterialCommunityIcons name="account-edit" size={20} color="#c0c5cb" style={styles.editIcon} />
-                      <Text style={styles.editProfile}>Edit Profile</Text>
+                  {error && <Text style={error1}>{error}</Text>}
+                  <TouchableOpacity onPress={saveProfile}>
+                    <View style={[styles.saveProfileContainer, { alignSelf: "flex-start" }]}>
+                      <MaterialCommunityIcons name="account-check" size={20} color="#c0c5cb" style={styles.editIcon} />
+                      <Text style={styles.editProfile}>Save Changes</Text>
                     </View>
                   </TouchableOpacity>
-                  <TouchableOpacity onPress={handlePasswordChange}>
-                  <View style={[styles.editProfileContainer,{alignSelf: "flex-start"}]}>
-                      <MaterialCommunityIcons name="account-key-outline" size={20} color="#c0c5cb" style={styles.editIcon} />
-                      <Text style={styles.editProfile}>Change Password</Text>
+                  <TouchableOpacity onPress={handleCancelEditProfile}>
+                    <View style={[styles.editProfileContainer, { alignSelf: "flex-end" }]}>
+                      <Text style={[styles.editProfile, { paddingRight: 5 }]}>Cancel</Text>
                     </View>
-                    </TouchableOpacity>
-                </View>
-                <View style={styles.logoutContainer}>
-                <TouchableOpacity onPress={handleLogout}>
-                  <Text style={styles.logoutButton}>Logout</Text>
-                </TouchableOpacity>
+                  </TouchableOpacity>
                 </View>
               </>)}
-          </>)}
-    </View >
-  </>
-);
+          </>) : (
+            <>
+              <View style={styles.coverImage}>
+                <View style={styles.avatarContainer}>
+                  <Image
+                    source={{ uri: avatar }}
+                    style={styles.avatar}
+                    resizeMode="contain"
+                  />
+                  <Text style={[styles.name, styles.textWithShadow]}>{name}</Text>
+                </View>
+              </View>
+              {loading ? (
+                <ActivityIndicator size="large" color="#fff" style={loader} />) : (
+                <>
+                  <View style={styles.content}>
+                    <View style={[styles.labelContainer, { top: -30 }]}>
+                      <Text style={{ color: "#fff" }}>Email</Text>
+                    </View>
+                    <View style={styles.infoLabel}>
+                      <Text style={styles.infoValue}>{(email)}</Text>
+                    </View>
+                    <View style={[styles.labelContainer, { top: 54 }]}>
+                      <Text style={{ color: "#fff" }}>Device ID</Text>
+                    </View>
+                    <View style={styles.infoLabel}>
+                      <Text style={styles.infoValue}>{deviceID}</Text>
+                    </View>
+                    <TouchableOpacity onPress={handleEditProfile}>
+                      <View style={[styles.editProfileContainer, { alignSelf: "flex-end", }]}>
+                        <MaterialCommunityIcons name="account-edit" size={20} color="#c0c5cb" style={styles.editIcon} />
+                        <Text style={styles.editProfile}>Edit Profile</Text>
+                      </View>
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={handlePasswordChange}>
+                      <View style={[styles.editProfileContainer, { alignSelf: "flex-start" }]}>
+                        <MaterialCommunityIcons name="account-key-outline" size={20} color="#c0c5cb" style={styles.editIcon} />
+                        <Text style={styles.editProfile}>Change Password</Text>
+                      </View>
+                    </TouchableOpacity>
+                  </View>
+                  <View style={styles.logoutContainer}>
+                    <TouchableOpacity onPress={handleLogout}>
+                      <Text style={styles.logoutButton}>Logout</Text>
+                    </TouchableOpacity>
+                  </View>
+                </>)}
+            </>)}
+      </View >
+    </>
+  );
 };
 
 const styles = StyleSheet.create({
@@ -338,13 +338,30 @@ const styles = StyleSheet.create({
     backgroundColor: '#17181F',
   },
   coverImage: {
-    height: 200,
-    width: "100%",
-    backgroundColor: "#1295b8",
+    ...Platform.select({
+      ios: {
+        height: height * 0.27,
+        width: "100%",
+        backgroundColor: "#1295b8",
+      },
+      android: {
+        height: 200,
+        width: "100%",
+        backgroundColor: "#1295b8",
+      },
+    })
   },
   avatarContainer: {
-    alignItems: 'center',
-    padding: 20,
+    ...Platform.select({
+      ios: {
+        alignItems: 'center',
+        paddingTop: height * 0.06,
+      },
+      android: {
+        alignItems: 'center',
+        paddingTop: 20,
+      },
+    }),
   },
   avatar: {
     width: 130,
@@ -359,10 +376,11 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginTop: 10,
     paddingBottom: 20,
-    color: '#252732'
+    color: '#252735'
   },
   textWithShadow: {
     textShadowRadius: 5,
+    textShadowOffset: { width: 1, height: 1 },
   },
   content: {
     marginTop: 30,
@@ -441,7 +459,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: "bold",
     color: "#fa6400",
-        // color: "#c0c5cb",
+    // color: "#c0c5cb",
   },
 
 });

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator, Dimensions } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator, Dimensions, Platform } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import { topNav, navText, navIcon, navIconContainer } from "../../css/pagecss"
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -30,7 +30,7 @@ const Cost = ({ navigation }) => {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${auth}`,
+            Authorization: `Bearer ${auth}`
           },
         });
         if (!response.ok) {
@@ -70,6 +70,7 @@ const Cost = ({ navigation }) => {
     });
     setFilteredData(filteredData);
   };
+  // console.log(filteredData)
 
   const calculateCost = (filteredData) => {
     if (filteredData.length === 0) {
@@ -148,15 +149,15 @@ const Cost = ({ navigation }) => {
 
     calculateCostForLast3Months();
   }, [kwh]);
-//
+  //
   const helpPage = () => {
     navigation.navigate("Help");
   };
-//
+  //
   return (
     <>
       <View style={topNav}>
-        <Text style={[navText,{fontFamily: 'OpenSans'}]}>EnergiSense</Text>
+        <Text style={[navText, { fontFamily: 'OpenSans' }]}>EnergiSense</Text>
         <TouchableOpacity onPress={helpPage} style={[navIconContainer, { right: 25 }]}>
           <FontAwesome5 name="question-circle" size={24} color="#c0c5cb" style={navIcon} />
         </TouchableOpacity>
@@ -171,10 +172,11 @@ const Cost = ({ navigation }) => {
               style={[styles.picker, { width: 160 }]}
               dropdownIconColor={"white"}
               mode={'dropdown'}
+              itemStyle={styles.pickerItem}
             >
-              <Picker.Item label="Select Month" value={null} style={styles.pickerItem} />
+              <Picker.Item label="Select Month" value={null} />
               {uniqueMonths.map((month) => (
-                <Picker.Item key={month} label={moment().month(month - 1).format("MMMM")} value={month} style={styles.pickerItem} />
+                <Picker.Item key={month} label={moment().month(month - 1).format("MMMM")} value={month} />
               ))}
             </Picker>
           </View>
@@ -185,21 +187,22 @@ const Cost = ({ navigation }) => {
               style={[styles.picker, { width: 160 }]}
               dropdownIconColor={"white"}
               mode={'dropdown'}
+              itemStyle={styles.pickerItem}
             >
-              <Picker.Item label="Select Year" value={null} style={styles.pickerItem} />
+              <Picker.Item label="Select Year" value={null} />
               {uniqueYears.map((year) => (
-                <Picker.Item key={year} label={year.toString()} value={year} style={styles.pickerItem} />
+                <Picker.Item key={year} label={year.toString()} value={year} />
               ))}
             </Picker>
           </View>
         </View>
         <Text style={styles.costText}>{costText}</Text>
-        <View style={{height:50}}>
-        {loading ? (
-          <ActivityIndicator size="large" color="#fff" style={styles.activityIndicator} />
-        ) : (
-          <Text style={styles.cost}>₹{totalCost}</Text>
-        )}
+        <View style={{ height: 50 }}>
+          {loading ? (
+            <ActivityIndicator size="large" color="#fff" style={styles.activityIndicator} />
+          ) : (
+            <Text style={styles.cost}>{filteredData.length != 0 ? '₹' : ''}{totalCost}</Text>
+          )}
         </View>
         {showGraph && (
           <TouchableOpacity
@@ -294,6 +297,7 @@ const Cost = ({ navigation }) => {
   );
 };
 const { width: screenWidth } = Dimensions.get("window");
+const { height: screenHeight } = Dimensions.get("window");
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -302,33 +306,80 @@ const styles = StyleSheet.create({
     position: 'relative',
   },
   heading: {
-    fontSize: screenWidth * 0.07,
-    fontWeight: "bold",
-    textAlign: "center",
-    color: "#fff",
-    marginBottom: screenWidth * 0.03,
+    ...Platform.select({
+      ios: {
+        fontSize: screenWidth * 0.07,
+        fontWeight: "bold",
+        textAlign: "center",
+        color: "#fff",
+        marginBottom: screenWidth * 0.01,
+      },
+      android: {
+        fontSize: screenWidth * 0.07,
+        fontWeight: "bold",
+        textAlign: "center",
+        color: "#fff",
+        marginBottom: screenWidth * 0.03,
+      },
+    }),
   },
   pickerContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginVertical: screenWidth * 0.03,
+    ...Platform.select({
+      ios: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        marginVertical: screenWidth * 0.03,
+      },
+      android: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        marginVertical: screenWidth * 0.03,
+      },
+    }),
   },
   pickerWrapper: {
-    borderRadius: 100,
-    width: screenWidth * 0.425,
-    backgroundColor: "rgb(32, 33, 46)",
-    overflow: "hidden",
+    ...Platform.select({
+      ios: {
+        borderRadius: 100,
+        width: screenWidth * 0.425,
+        height: screenHeight * 0.05,
+        // backgroundColor: "rgb(32, 33, 46)",
+        borderRadius: 100,
+        alignItems: 'center',
+        justifyContent: 'center',
+        overflow: "hidden",
+      },
+      android: {
+        borderRadius: 100,
+        width: screenWidth * 0.425,
+        backgroundColor: "rgb(32, 33, 46)",
+        overflow: "hidden",
+      },
+    }),
+
   },
   picker: {
     color: "white",
-    marginHorizontal: 10,
+    // marginHorizontal: 10,
   },
   pickerItem: {
-    color: "white",
-    textAlign: "center",
-    width: "100%",
-    backgroundColor: "rgb(32, 33, 46)",
-    borderRadius: 100,
+    ...Platform.select({
+      ios: {
+        fontSize: 15,
+        fontWeight: "bold",
+        color: "white",
+        textAlign: "center",
+        overflow: "hidden",
+      },
+      android: {
+        color: "white",
+        textAlign: "center",
+        width: "100%",
+        backgroundColor: "rgb(32, 33, 46)",
+        borderRadius: 100,
+      },
+    }),
+
   },
   costText: {
     marginTop: screenWidth * 0.03,
